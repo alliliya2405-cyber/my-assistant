@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#6d5dfc">
+  <title>Мой ассистент</title>
+  <link rel="stylesheet" href="styles.css?v=16">
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><div class="brand-mark">МА</div><div><strong>Мой ассистент</strong><span>Жизнь, проекты и знания</span></div></div>
+      <nav id="nav" class="nav"></nav>
+      <div class="sidebar-footer">
+        <button class="btn ghost" id="exportBtn">Экспорт</button>
+        <label class="btn ghost file-btn">Импорт<input id="importInput" type="file" accept="application/json" hidden></label>
+      </div>
+    </aside>
+    <div class="main-wrap">
+      <header class="topbar">
+        <button id="menuBtn" class="icon-btn mobile-only" aria-label="Открыть меню">☰</button>
+        <div><p class="eyebrow" id="breadcrumb">Главная</p><h1 id="pageTitle">Панель</h1></div>
+        <div class="top-actions"><span id="saveStatus" class="save-status" aria-live="polite">Сохранено локально</span><button id="quickAddBtn" class="btn primary">+ Быстро добавить</button></div>
+      </header>
+      <main id="content" class="content" tabindex="-1"></main>
+    </div>
+  </div>
+  <div id="modalRoot"></div>
+  <div id="pomodoroSignalRoot"></div>
+  <div id="toastRoot" class="toast-root" aria-live="polite"></div>
+  <script src="app.js?v=16"></script>
+</body>
+</html>
