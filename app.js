@@ -214,7 +214,7 @@ out.reports=out.reports.filter(x=>x&&typeof x==='object').map(ensureId);out.repo
   out.tasks=out.tasks.filter(t=>t.linkedSourceType!=='business_process');
   out.version=8;return out
 }
-let state=(()=>{try{return normalize(JSON.parse(localStorage.getItem(STORAGE_KEY)||'null'))}catch{return sample()}})();
+let state=(()=>{try{return normalize(MyAssistantDataStore.load())}catch{return sample()}})();
 try{cleanPreschoolReportRows()}catch(err){console.error('Report cleanup failed',err)}
 let route=sessionStorage.getItem('myAssistant.route')||'dashboard', dayCursor=new Date(), weekCursor=new Date(), monthCursor=new Date(), monthSelectedDate=todayIso(), monthTaskFilter='all', activeBoard=state.boards[0]?.id||'';
 let weekDayIndex=(new Date().getDay()+6)%7;
