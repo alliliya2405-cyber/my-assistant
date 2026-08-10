@@ -1,9 +1,0 @@
-Validation checklist for data-store-load-v1
-
-- data-store.js is loaded before app.js
-- initial app state uses MyAssistantDataStore.load()
-- normalize(...) remains unchanged
-- sample() remains unchanged
-- persist(...) remains direct localStorage write
-- storage key remains myAssistantProFinal.v1
-- no migration or localStorage cleanup
