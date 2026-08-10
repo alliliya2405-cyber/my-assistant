@@ -1,0 +1,71 @@
+name: Data store roundtrip test
+
+on:
+  push:
+    branches:
+      - data-store-save-v1
+    paths:
+      - .github/workflows/data-store-roundtrip-test.yml
+
+permissions:
+  contents: write
+
+jobs:
+  roundtrip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: data-store-save-v1
+          fetch-depth: 0
+      - name: Verify data store save and load roundtrip
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const vm = require('vm');
+          const storage = new Map();
+          const localStorage = {
+            getItem(key) { return storage.has(key) ? storage.get(key) : null; },
+            setItem(key, value) { storage.set(key, String(value)); }
+          };
+          const window = { localStorage };
+          vm.runInNewContext(fs.readFileSync('core/storage/data-store.js', 'utf8'), { window });
+          const store = window.MyAssistantDataStore;
+          if (!store) throw new Error('MyAssistantDataStore was not initialized');
+          const original = {
+            version: 8,
+            settings: { workingMode: true, nested: { ok: true } },
+            projects: [{ id: 'p1', name: 'Тестовый проект' }],
+            tasks: [{ id: 't1', title: 'Тестовая задача', done: false }],
+            empty: null
+          };
+          if (store.save(original) !== true) throw new Error('save() did not report success');
+          const raw = localStorage.getItem('myAssistantProFinal.v1');
+          if (raw !== JSON.stringify(original)) throw new Error('Serialized JSON changed');
+          const loaded = store.load();
+          if (JSON.stringify(loaded) !== JSON.stringify(original)) throw new Error('Roundtrip changed data');
+          original.tasks[0].title = 'Изменённая задача';
+          store.save(original);
+          const reloaded = store.load();
+          if (reloaded.tasks[0].title !== 'Изменённая задача') throw new Error('Second save did not persist');
+          console.log('Data Store roundtrip OK');
+          NODE
+      - name: Verify persist uses data store and direct save is gone
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          text = Path('app.js').read_text(encoding='utf-8')
+          assert 'function persist(message){try{MyAssistantDataStore.save(state);' in text
+          assert 'function persist(message){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));' not in text
+          print('persist integration OK')
+          PY
+      - name: Validate JavaScript syntax
+        run: node --check app.js && node --check core/storage/data-store.js
+      - name: Remove temporary workflow
+        run: |
+          rm .github/workflows/data-store-roundtrip-test.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/workflows/data-store-roundtrip-test.yml
+          git commit -m "Remove one-shot data store roundtrip test"
+          git push origin HEAD:data-store-save-v1
