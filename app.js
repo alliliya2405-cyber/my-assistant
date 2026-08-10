@@ -220,7 +220,7 @@ let route=sessionStorage.getItem('myAssistant.route')||'dashboard', dayCursor=ne
 let weekDayIndex=(new Date().getDay()+6)%7;
 if(route==='business_process'||route==='pomodoro')route='week';
 if(route==='roadmaps')route='month';
-function persist(message){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));const status=$('#saveStatus');if(status){status.textContent='Сохранено локально';status.classList.remove('error')}if(message)toast(message);return true}catch(e){const status=$('#saveStatus');if(status){status.textContent='Ошибка сохранения';status.classList.add('error')}toast('Не удалось сохранить данные. Проверьте настройки браузера.');console.error(e);return false}}
+function persist(message){try{MyAssistantDataStore.save(state);const status=$('#saveStatus');if(status){status.textContent='Сохранено локально';status.classList.remove('error')}if(message)toast(message);return true}catch(e){const status=$('#saveStatus');if(status){status.textContent='Ошибка сохранения';status.classList.add('error')}toast('Не удалось сохранить данные. Проверьте настройки браузера.');console.error(e);return false}}
 function log(type,title,projectId=''){state.history.unshift({id:uid(),type,title,projectId,at:nowStamp()});state.history=state.history.slice(0,500)}
 const project=id=>state.projects.find(x=>x.id===id);
 const progress=items=>items.length?Math.round(items.filter(x=>x.done||x.status==='done'||x.status==='accepted').length/items.length*100):0;
