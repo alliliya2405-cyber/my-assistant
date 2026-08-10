@@ -1,0 +1,44 @@
+name: Temporary data store load patch
+
+on:
+  push:
+    branches:
+      - data-store-load-v1
+    paths:
+      - .github/workflows/patch-data-store-load.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: data-store-load-v1
+      - name: Patch initial state loading only
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('app.js')
+          text = path.read_text(encoding='utf-8')
+          old = "let state=(()=>{try{return normalize(JSON.parse(localStorage.getItem(STORAGE_KEY)||'null'))}catch{return sample()}})();"
+          new = "let state=(()=>{try{return normalize(MyAssistantDataStore.load())}catch{return sample()}})();"
+          if old not in text:
+              raise SystemExit('Expected initial load expression not found; no file was changed')
+          if text.count(old) != 1:
+              raise SystemExit('Expected exactly one initial load expression; no file was changed')
+          path.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
+      - name: Commit exact patch
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app.js
+          git diff --cached --check
+          git diff --cached --exit-code && exit 1 || true
+          git commit -m "feat: load initial state through data store"
+          git push origin HEAD:data-store-load-v1
