@@ -37,6 +37,8 @@
 }
 
 .life-grid .list-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   padding: 14px 0;
   gap: 14px;
   border: 0;
@@ -44,7 +46,7 @@
   border-radius: 0;
   background: transparent;
   box-shadow: none;
-  align-items: flex-start;
+  align-items: start;
 }
 
 .life-grid .list-row:first-child {
@@ -54,30 +56,36 @@
 
 .life-grid .list-row > div:first-child {
   min-width: 0;
-  flex: 1;
+  width: auto;
 }
 
 .life-grid .list-row b {
   display: block;
   line-height: 1.3;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 .life-grid .list-row .item-meta {
   margin-top: 5px;
   line-height: 1.45;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 .life-grid .list-row .actions {
+  display: flex;
   flex: 0 0 auto;
   gap: 6px;
+  align-items: center;
 }
 
 .life-grid .list-row .btn.small {
   padding-inline: 10px;
+  white-space: nowrap;
 }
 
-@media (max-width: 1180px) {
+@media (max-width: 1280px) {
   .life-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -93,10 +101,11 @@
   }
 
   .life-grid .list-row {
-    flex-direction: column;
+    grid-template-columns: 1fr;
   }
 
   .life-grid .list-row .actions {
     width: 100%;
+    flex-wrap: wrap;
   }
 }
