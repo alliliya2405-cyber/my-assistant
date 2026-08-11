@@ -1,0 +1,9 @@
+body.route-team .team-manage-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:16px 0 18px}
+body.route-team .team-edit-card-btn{margin-left:auto}
+.team-manage-modal .team-project-roles{margin-top:22px;display:grid;gap:10px}
+.team-manage-modal .team-project-roles h3{margin:0 0 4px}
+.team-manage-modal .team-project-role-row{display:grid;grid-template-columns:minmax(220px,1fr) minmax(220px,1fr);gap:14px;align-items:center;padding:12px 14px;border:1px solid #e5e7ef;border-radius:14px;background:#fafbfe}
+.team-manage-modal .team-project-role-row div{display:grid;gap:4px}
+.team-manage-modal .team-project-role-row small{color:#7b8495}
+.team-manage-modal .team-project-role-row input{width:100%}
+@media(max-width:760px){body.route-team .team-manage-toolbar{align-items:stretch;flex-direction:column}.team-manage-modal .team-project-role-row{grid-template-columns:1fr}}
