@@ -1,0 +1,23 @@
+name: Meeting recognition tests
+
+on:
+  push:
+    branches:
+      - meeting-task-recognition-v2
+  pull_request:
+    paths:
+      - 'fixes/meeting-task-recognition-v2.js'
+      - 'fixes/meeting-task-recognition-v2-cleanup.js'
+      - 'tests/meeting-task-recognition-v2.test.js'
+      - 'tests/meeting-task-recognition-debug.js'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node tests/meeting-task-recognition-debug.js
+      - run: node tests/meeting-task-recognition-v2.test.js
