@@ -9,9 +9,11 @@ on:
       - 'fixes/meeting-task-recognition-v2.js'
       - 'fixes/meeting-task-recognition-v2-cleanup.js'
       - 'fixes/team-registry-identity-v1.js'
+      - 'fixes/team-status-labels-v1.js'
       - 'tests/meeting-task-recognition-v2.test.js'
       - 'tests/meeting-task-recognition-debug.js'
       - 'tests/team-registry-identity-v1.test.js'
+      - 'tests/team-status-labels-v1.test.js'
 
 jobs:
   test:
@@ -24,3 +26,4 @@ jobs:
       - run: node tests/meeting-task-recognition-debug.js
       - run: node tests/meeting-task-recognition-v2.test.js
       - run: node tests/team-registry-identity-v1.test.js
+      - run: node tests/team-status-labels-v1.test.js
