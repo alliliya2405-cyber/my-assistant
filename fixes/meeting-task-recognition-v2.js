@@ -51,8 +51,8 @@
     m=source.match(/\b(?:до|к)?\s*(0?[1-9]|[12]\d|3[01])\s+(января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)(?:\s+(20\d{2}))?/i);
     if(m){const mo=MONTHS.indexOf(m[2].toLowerCase())+1,d=+m[1];let y=m[3]?+m[3]:base.getFullYear();if(!m[3]&&mo<base.getMonth()+1)y++;if(validDate(y,mo,d))return `${y}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}`}
     const rel=norm(source);
-    if(/\bпослезавтра\b/.test(rel)){const d=new Date(base);d.setDate(d.getDate()+2);return isoDate(d)}
-    if(/\bзавтра\b/.test(rel)){const d=new Date(base);d.setDate(d.getDate()+1);return isoDate(d)}
+    if(rel.includes('послезавтра')){const d=new Date(base);d.setDate(d.getDate()+2);return isoDate(d)}
+    if(rel.includes('завтра')){const d=new Date(base);d.setDate(d.getDate()+1);return isoDate(d)}
     return parseIso(fallback)?fallback:isoDate(base);
   }
 
