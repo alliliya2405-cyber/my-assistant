@@ -6,22 +6,28 @@
   const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const fmt=v=>{const m=String(v||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);return m?`${m[3]}.${m[2]}.${m[1]}`:(v||'—')};
   const statusLabel=s=>({active:'Активный',assigned:'Назначено',planned:'Запланировано',doing:'В работе',review:'На проверке',done:'Выполнено',paused:'На паузе'}[s]||s||'—');
-  const getState=()=>window.state||null;
+  const getState=()=>typeof state!=='undefined'?state:null;
   const personKey=v=>String(v||'').trim().toLowerCase();
-  function projectMembers(p){return [...(p.team||[]),...(p.subprojects||[]).flatMap(sp=>(sp.team||[]).map(m=>({...m,source:`Подпроект: ${sp.name}`})))];}
   function rows(){
-    const s=getState();if(!s)return[];const map=new Map();
-    const ensure=name=>{const key=personKey(name);if(!key)return null;if(!map.has(key))map.set(key,{name:String(name).trim(),roles:new Set(),projects:new Map(),assignments:[]});return map.get(key)};
-    (s.projects||[]).forEach(p=>projectMembers(p).forEach(m=>{const x=ensure(m.name);if(!x)return;if(m.role)x.roles.add(m.role);x.projects.set(p.id,{name:p.name,status:p.status||'active',source:m.source||'Проект'});}));
-    (s.assignments||[]).forEach(a=>{const x=ensure(a.assignee);if(!x)return;x.assignments.push(a);if(a.projectId){const p=(s.projects||[]).find(p=>p.id===a.projectId);if(p&&!x.projects.has(p.id))x.projects.set(p.id,{name:p.name,status:p.status||a.status||'active',source:'Поручение'});}});
-    return [...map.values()].map(x=>{
-      const open=x.assignments.filter(a=>a.status!=='done');
-      const overdue=open.filter(a=>a.deadline&&a.deadline<new Date().toISOString().slice(0,10));
+    const s=getState();if(!s)return[];
+    const registry=typeof teamRegistry==='function'?teamRegistry():[];
+    const allAssignments=Array.isArray(s.assignments)?s.assignments:[];
+    return registry.map(person=>{
+      const memberIds=person.memberIds instanceof Set?person.memberIds:new Set(Array.isArray(person.memberIds)?person.memberIds:[]);
+      const assignments=allAssignments.filter(a=>(a.assigneeId&&memberIds.has(a.assigneeId))||personKey(a.assignee)===personKey(person.name));
+      const projectMap=new Map();
+      (Array.isArray(person.projects)?person.projects:[]).forEach(row=>{
+        const key=row.projectId||`${row.project||''}|${row.source||''}`;
+        if(!projectMap.has(key))projectMap.set(key,{name:row.project||'Без проекта',status:row.status||'active',source:row.source||'Проект'});
+      });
+      const open=assignments.filter(a=>a.status!=='done');
+      const today=typeof todayIso==='function'?todayIso():new Date().toISOString().slice(0,10);
+      const overdue=open.filter(a=>a.deadline&&a.deadline<today);
       const dated=open.filter(a=>a.deadline).sort((a,b)=>a.deadline.localeCompare(b.deadline));
-      const active=[...x.projects.values()].filter(p=>p.status==='active').length;
+      const active=[...projectMap.values()].filter(p=>p.status==='active').length;
       const score=active*2+open.length+overdue.length*2;
       const level=score>=8?'high':score>=4?'medium':'normal';
-      return {...x,open,overdue,next:dated[0]||null,active,score,level};
+      return {name:person.name,roles:person.roles instanceof Set?person.roles:new Set(person.roles||[]),projects:projectMap,assignments,open,overdue,next:dated[0]||null,active,score,level};
     }).sort((a,b)=>b.score-a.score||a.name.localeCompare(b.name,'ru'));
   }
   function render(){
