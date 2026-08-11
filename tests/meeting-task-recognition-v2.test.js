@@ -1,6 +1,7 @@
 'use strict';
 const assert=require('assert');
 const recognition=require('../fixes/meeting-task-recognition-v2-cleanup.js');
+const directory=require('../fixes/meeting-team-directory-v1.js');
 
 const people=[
   {id:'a',name:'Абдуллина Л.Э.',projectIds:['p1','p3']},
@@ -12,7 +13,7 @@ const projects=[
   {id:'p2',name:'Обучение педагогов'},
   {id:'p3',name:'Числумики'}
 ];
-const parse=(meeting)=>recognition.extractMeetingTaskCandidates({date:'2026-08-11',projectIds:['p1'],...meeting},{people,projects});
+const parse=(meeting,dir=people)=>recognition.extractMeetingTaskCandidates({date:'2026-08-11',projectIds:['p1'],...meeting},{people:dir,projects});
 
 let rows=parse({actionItems:'Королева должна подготовить презентацию до 15 августа.'});
 assert.equal(rows.length,1);assert.equal(rows[0].assignee,'Королева С.И.');assert.equal(rows[0].title,'Подготовить презентацию');assert.equal(rows[0].deadline,'2026-08-15');assert.equal(rows[0].projectId,'p1');
@@ -50,4 +51,14 @@ assert.equal(rows.length,1);assert.equal(rows[0].projectId,'','При неско
 rows=parse({actionItems:'Королева должна подготовить презентацию до 15 августа.',decisions:'Королева должна подготовить презентацию до 15 августа.'});
 assert.equal(rows.length,1,'Одинаковое поручение не должно дублироваться');
 
-console.log('meeting-task-recognition-v2: 12 scenarios passed');
+const realBase=[{id:'short-i',name:'О.Ф.',projectIds:['p2']}];
+const realMeeting={participants:'Абдуллина Л.Э., Исса О.Ф., Королева С.И.',projectIds:['p1','p2','p3']};
+const realPeople=directory.enhanceDirectory(realBase,[realMeeting]);
+assert(realPeople.some(x=>x.id==='short-i'&&x.name==='Исса О.Ф.'),'Инициалы участника проекта должны заменяться полным именем из совещания');
+assert(!realPeople.some(x=>x.name==='О.Ф.'),'Короткий дубль О.Ф. не должен оставаться в списке исполнителей');
+
+rows=parse({tasks:'Королева должна подготовить презентацию до 15 августа.\nАбдуллина должна составить план до завтра.\nИсса О.Ф. | Отправить письмо участникам | 2026-08-14 | Обучение педагогов'},directory.enhanceDirectory([], [realMeeting]));
+assert.equal(rows.length,3,'Поле «Задания участникам» должно распознавать все три однозначных поручения');
+assert.deepEqual(rows.map(x=>x.assignee).sort(),['Абдуллина Л.Э.','Исса О.Ф.','Королева С.И.'].sort());
+
+console.log('meeting-task-recognition-v2: 14 scenarios passed');
