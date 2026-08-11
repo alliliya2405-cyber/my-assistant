@@ -17,7 +17,16 @@
     });
   }
 
-  function removeRouteControls(content) {
+  function fixReflectionView() {
+    const content = document.querySelector('#content');
+    const pageTitle = document.querySelector('#pageTitle');
+    if (!content || !pageTitle) return;
+
+    const isReflection = pageTitle.textContent.trim() === 'Рефлексия';
+    content.classList.toggle('reflection-view', isReflection);
+    if (!isReflection) return;
+
+    content.querySelectorAll('.card, article.card').forEach(cleanCard);
     content.querySelectorAll('.global-collapse-controls').forEach(x => x.remove());
     content.querySelectorAll('button').forEach(button => {
       const text = button.textContent.trim();
@@ -29,26 +38,13 @@
     });
   }
 
-  function fixLibraryView() {
-    const content = document.querySelector('#content');
-    const pageTitle = document.querySelector('#pageTitle');
-    if (!content || !pageTitle) return;
-
-    const isLibrary = pageTitle.textContent.trim() === 'Библиотека';
-    content.classList.toggle('library-view', isLibrary);
-    if (!isLibrary) return;
-
-    content.querySelectorAll('.card, article.card, .grid > .card').forEach(cleanCard);
-    removeRouteControls(content);
-  }
-
   let scheduled = false;
   const schedule = () => {
     if (scheduled) return;
     scheduled = true;
     requestAnimationFrame(() => {
       scheduled = false;
-      fixLibraryView();
+      fixReflectionView();
     });
   };
 
