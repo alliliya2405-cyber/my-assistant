@@ -1,0 +1,13 @@
+/* Month selected-day panel height v1
+   Keep the selected day in normal page flow instead of a nested scroll area. */
+.month-workspace .month-day-panel.universal-scroll-area,
+.month-workspace .month-day-panel.collapsible-entry{
+  max-height:none!important;
+  height:auto!important;
+  overflow-y:visible!important;
+  overflow-x:visible!important;
+}
+.month-workspace .month-day-panel .month-panel-tasks{
+  max-height:none!important;
+  overflow:visible!important;
+}
