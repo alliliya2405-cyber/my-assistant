@@ -1,0 +1,86 @@
+/* Health Habit Cards v1
+   Visual-only layer. Habit data, scheduling and task sync remain unchanged. */
+
+.health-grid{
+  align-items:stretch;
+}
+.health-grid .habit{
+  position:relative;
+  display:grid;
+  grid-template-columns:52px minmax(0,1fr);
+  gap:14px;
+  align-items:start;
+  padding:16px;
+  box-shadow:0 5px 18px rgba(30,41,59,.045);
+}
+.health-grid .habit-icon{
+  width:48px;
+  height:48px;
+  display:grid;
+  place-items:center;
+  border-radius:15px;
+  background:#f3f1ff;
+  font-size:24px;
+  line-height:1;
+}
+.health-grid .habit > div:last-child{
+  min-width:0;
+}
+.health-grid .habit .toolbar{
+  margin:0 0 8px;
+  align-items:flex-start;
+  gap:10px;
+}
+.health-grid .habit h3{
+  margin:2px 0 0;
+  font-size:17px;
+  line-height:1.25;
+}
+.health-grid .habit .actions{
+  margin-left:auto;
+  gap:5px;
+}
+.health-grid .habit .actions .btn{
+  padding:6px 9px;
+  font-size:12px;
+  box-shadow:none;
+}
+.health-grid .habit .actions .btn.danger{
+  background:transparent;
+  color:#b45353;
+}
+.health-grid .habit .item-meta{
+  margin-top:3px;
+  line-height:1.45;
+}
+.health-grid .habit [data-toggle-health]{
+  margin-top:12px!important;
+  min-height:38px;
+  padding:8px 12px;
+}
+.health-grid .habit [data-toggle-health].primary{
+  box-shadow:0 5px 12px rgba(109,93,252,.16);
+}
+
+@media(max-width:680px){
+  .health-grid .habit{
+    grid-template-columns:44px minmax(0,1fr);
+    gap:11px;
+    padding:14px;
+  }
+  .health-grid .habit-icon{
+    width:42px;
+    height:42px;
+    border-radius:13px;
+    font-size:21px;
+  }
+  .health-grid .habit .toolbar{
+    display:block;
+  }
+  .health-grid .habit .actions{
+    margin-top:8px;
+  }
+  .health-grid .habit [data-toggle-health]{
+    width:100%;
+  }
+}
