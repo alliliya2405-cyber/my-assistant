@@ -657,7 +657,7 @@ function renderDashboard(){
   }).filter(x=>x.open>0).sort((a,b)=>b.open-a.open).slice(0,3);
   const q=quoteOfDay();
   const dateLabel=new Date(todayKey+'T12:00:00').toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});
-  const summary=today.length?`${today.length} ${today.length===1?'задача':'задачи'} на сегодня`:'На сегодня нет незавершённых задач';
+  const summary=today.length?`Задач на сегодня: ${today.length}`:'На сегодня нет незавершённых задач';
   return `<section class="home-today-head">
     <div><p class="eyebrow">${esc(dateLabel)}</p><h2>Ваш день</h2><p>${summary}${overdue.length?` · ${overdue.length} просрочено`:''}</p></div>
     <button class="btn primary" data-add-task>+ Добавить задачу</button>
