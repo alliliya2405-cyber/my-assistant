@@ -29,7 +29,7 @@
         button.className = 'month-all-tasks-link';
         button.dataset.monthAllTasks = '1';
         button.textContent = 'Все задачи';
-        button.setAttribute('aria-label', 'Открыть раздел со всеми задачами');
+        button.setAttribute('aria-label', 'Показать все задачи месяца');
         label.replaceWith(button);
       }
     }
@@ -40,10 +40,9 @@
     if (!button) return;
     event.preventDefault();
     event.stopPropagation();
-    route = 'tasks';
-    sessionStorage.setItem('myAssistant.route', route);
-    document.body.classList.remove('menu-open');
-    render();
+
+    const allFilter = document.querySelector('.month-workspace [data-month-filter="all"]');
+    if (allFilter) allFilter.click();
   });
 
   let scheduled = false;
