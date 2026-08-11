@@ -1,0 +1,69 @@
+/* Search View v1
+   Visual-only improvements for «Ещё → Поиск». */
+
+.search-view .toolbar {
+  max-width: 980px;
+  margin: 0 0 22px;
+  padding: 18px;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, .04);
+}
+
+.search-view #globalSearch {
+  width: 100%;
+  min-height: 54px;
+  font-size: 1rem;
+  border-radius: 14px;
+}
+
+.search-view #searchResults {
+  max-width: 980px;
+}
+
+.search-view #searchResults .list {
+  display: grid;
+  gap: 12px;
+}
+
+.search-view #searchResults .list-row.search-result {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 18px;
+  background: #fff;
+  text-align: left;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, .035);
+}
+
+.search-view #searchResults .item-title {
+  margin-top: 8px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.search-view #searchResults .item-meta {
+  margin-top: 5px;
+  line-height: 1.45;
+}
+
+.search-view #searchResults .search-result > span:last-child {
+  font-size: 1.25rem;
+  color: #7567f8;
+}
+
+@media (max-width: 760px) {
+  .search-view .toolbar {
+    padding: 14px;
+  }
+
+  .search-view #searchResults .list-row.search-result {
+    padding: 16px;
+  }
+}
