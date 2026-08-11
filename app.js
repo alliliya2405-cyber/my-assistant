@@ -458,7 +458,7 @@ const titles=Object.fromEntries(navRoutes());
 function buildNav(){
   const storedOpen=sessionStorage.getItem('myAssistant.navSection')||'';
   const activeSection=NAV.find(section=>section.route===route||(section.items||[]).some(([id])=>id===route));
-  const openSection=storedOpen||activeSection?.id||'planning';
+  const openSection=activeSection?.items?activeSection.id:(storedOpen||'planning');
   $('#nav').innerHTML=NAV.map(section=>{
     if(section.route)return `<button data-route="${section.route}" class="nav-primary ${route===section.route?'active':''}">${section.label}</button>`;
     const isOpen=section.id===openSection||section.id===activeSection?.id;
