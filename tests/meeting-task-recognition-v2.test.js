@@ -61,4 +61,19 @@ rows=parse({tasks:'Королева должна подготовить през
 assert.equal(rows.length,3,'Поле «Задания участникам» должно распознавать все три однозначных поручения');
 assert.deepEqual(rows.map(x=>x.assignee).sort(),['Абдуллина Л.Э.','Исса О.Ф.','Королева С.И.'].sort());
 
-console.log('meeting-task-recognition-v2: 14 scenarios passed');
+const staleMeeting={
+  tasks:'Исса О.Ф. | Отправить письмо участникам | 2026-08-14 | Обучение педагогов',
+  confirmedActions:[{id:'old',raw:'Исса О.Ф. | Отправить письмо участникам | 2026-08-14 | Обучение педагогов',title:'Письмо участникам',enabled:true}]
+};
+rows=parse(staleMeeting);
+assert.equal(rows[0].title,'Отправить письмо участникам');
+assert.equal(staleMeeting.confirmedActions[0].title,'Отправить письмо участникам','Старый сокращённый заголовок должен обновляться до полной распознанной формулировки');
+
+const manualMeeting={
+  tasks:'Исса О.Ф. | Отправить письмо участникам | 2026-08-14 | Обучение педагогов',
+  confirmedActions:[{id:'manual',raw:'Исса О.Ф. | Отправить письмо участникам | 2026-08-14 | Обучение педагогов',title:'Связаться с участниками лично',enabled:true}]
+};
+parse(manualMeeting);
+assert.equal(manualMeeting.confirmedActions[0].title,'Связаться с участниками лично','Произвольную ручную формулировку пользователя нельзя перезаписывать');
+
+console.log('meeting-task-recognition-v2: 16 scenarios passed');
