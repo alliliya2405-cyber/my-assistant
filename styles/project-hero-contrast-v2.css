@@ -1,0 +1,29 @@
+/* Final contrast override for light hero blocks in project workspace. */
+body.route-team #content .hero,
+body.route-resources #content .hero,
+body.route-reports #content .hero{
+  background:linear-gradient(135deg,#f3f5ff 0%,#f7f3ff 100%)!important;
+  border:1px solid #e2e4f4!important;
+  color:#202637!important;
+}
+body.route-team #content .hero h1,
+body.route-team #content .hero h2,
+body.route-team #content .hero h3,
+body.route-resources #content .hero h1,
+body.route-resources #content .hero h2,
+body.route-resources #content .hero h3,
+body.route-reports #content .hero h1,
+body.route-reports #content .hero h2,
+body.route-reports #content .hero h3{
+  color:#202637!important;
+}
+body.route-team #content .hero p:not(.eyebrow),
+body.route-resources #content .hero p:not(.eyebrow),
+body.route-reports #content .hero p:not(.eyebrow){
+  color:#5f6b7c!important;
+}
+body.route-team #content .hero .eyebrow,
+body.route-resources #content .hero .eyebrow,
+body.route-reports #content .hero .eyebrow{
+  color:#6558d9!important;
+}
