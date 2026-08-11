@@ -37,7 +37,8 @@
 - Planning / Today Density v1 после Pull Request #14;
 - Planning / Week Density v1 после Pull Request #15;
 - Calendar Task Delete v1 после Pull Request #16;
-- Planning / Month Clarity v1 после Pull Request #17.
+- Planning / Month Clarity v1 после Pull Request #17;
+- Month Collapse Fix v1 после Pull Request #18.
 
 ---
 
@@ -49,11 +50,13 @@ Application UX navigation v1, Главная / Сегодня v1, Task Card Unif
 
 Calendar Task Delete v1 объединён с `main` через Pull Request #16 и проверен пользователем на опубликованной версии 11.08.2026.
 
-Planning / Month Clarity v1 объединён с `main` через Pull Request #17. Изменение только визуальное: `app.js`, `renderMonth()`, пользовательские данные, Data Store, фильтры и обработчики не менялись.
+Planning / Month Clarity v1 объединён с `main` через Pull Request #17. Пользовательский скриншот подтвердил, что пустые дни стали спокойнее, а дни с задачами заметнее.
 
-Month Clarity v1 делает пустые даты и дни соседних месяцев визуально спокойнее, сохраняя выбор даты и добавление задачи, а дни с задачами — более заметными.
+На том же скриншоте выявлен отдельный дефект: над сеткой месяца универсальный механизм сворачивания ошибочно показывал заголовок чужой задачи и действие «Свернуть».
 
-Пользовательская визуальная проверка опубликованного экрана «Месяц» ещё требуется.
+Month Collapse Fix v1 выполнен отдельной веткой и объединён с `main` через Pull Request #18. Исправление изолировано в CSS и подключении файла стилей; `app.js`, данные, Data Store и логика месяца не менялись.
+
+Требуется финальная визуальная проверка, что чужой заголовок задачи над месячной сеткой исчез.
 
 ---
 
@@ -64,27 +67,28 @@ Month Clarity v1 делает пустые даты и дни соседних �
 - обычные задачи имеют понятное удаление в «Дне» и «Неделе»;
 - автоматически связанные задачи удаляются через их источник;
 - пустые календарные дни должны оставаться доступными для планирования, но не конкурировать с днями, где есть задачи;
+- универсальное сворачивание не должно визуально оборачивать месячную календарную сетку;
 - route id, пользовательские данные и Data Store не менять без отдельной необходимости.
 
 ---
 
 # 5. Над чем работаем сейчас
 
-Planning / Month Clarity v1 находится в `main`.
+Month Collapse Fix v1 находится в `main`.
 
-Текущая контрольная задача — визуально проверить опубликованный экран «Планирование → Месяц».
+Текущая контрольная задача — визуально проверить опубликованный экран «Планирование → Месяц» после исправления.
 
 ---
 
 # 6. Следующее одно действие
 
-**открыть опубликованный экран «Планирование → Месяц» и проверить, что пустые дни стали спокойнее, а дни с задачами находятся взглядом быстрее, при этом кнопка `+` и выбор пустого дня остаются доступными.**
+**открыть опубликованный экран «Планирование → Месяц» и проверить, что над календарной сеткой больше нет чужого заголовка задачи и кнопки «Свернуть», а сама сетка месяца и выбор дня работают как раньше.**
 
 ---
 
 # 7. Что пока не менять
 
-До визуальной проверки Month Clarity v1 не менять без отдельной причины:
+До этой визуальной проверки не менять без отдельной причины:
 
 - пользовательские данные;
 - Data Store и формат `localStorage`;
@@ -117,12 +121,12 @@ Planning / Month Clarity v1 находится в `main`.
 
 Стабильная версия:
 
-**Architecture v2 + Data Model v1 + Data Store v1 + Application UX navigation v1 + Home Today dashboard v1 + Design System v1 task density + Task Card Unified v1 + Top Bar & Quick Actions v1 + Project Cards v1 + Project Scroll Fix v1 + Planning / Today Density v1 + Planning / Week Density v1 + Calendar Task Delete v1 + Planning / Month Clarity v1 находятся в `main`.**
+**Architecture v2 + Data Model v1 + Data Store v1 + Application UX navigation v1 + Home Today dashboard v1 + Design System v1 task density + Task Card Unified v1 + Top Bar & Quick Actions v1 + Project Cards v1 + Project Scroll Fix v1 + Planning / Today Density v1 + Planning / Week Density v1 + Calendar Task Delete v1 + Planning / Month Clarity v1 + Month Collapse Fix v1 находятся в `main`.**
 
 Текущий этап:
 
-**пользовательская визуальная проверка Planning / Month Clarity v1.**
+**финальная пользовательская визуальная проверка экрана «Месяц» после Month Collapse Fix v1.**
 
 Следующий шаг:
 
-**проверить опубликованный экран «Планирование → Месяц».**
+**проверить опубликованный экран «Планирование → Месяц» без чужого collapse-заголовка.**
