@@ -1,0 +1,12 @@
+'use strict';
+const assert=require('assert');
+const api=require('../fixes/team-status-labels-v1.js');
+assert.equal(api.labelStatus('assigned'),'Назначено');
+assert.equal(api.labelStatus('active'),'Активный');
+assert.equal(api.labelStatus('planned'),'Запланировано');
+assert.equal(api.labelStatus('paused'),'На паузе');
+assert.equal(api.labelStatus('doing'),'В работе');
+assert.equal(api.labelStatus('review'),'На проверке');
+assert.equal(api.labelStatus('done'),'Выполнено');
+assert.equal(api.labelStatus('custom'),'custom','Неизвестный статус нельзя менять');
+console.log('team-status-labels-v1: 8 scenarios passed');
