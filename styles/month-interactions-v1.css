@@ -1,0 +1,18 @@
+/* Month interactions v1 */
+.month-filter-status .month-all-tasks-link{
+  appearance:none;
+  border:0;
+  background:transparent;
+  padding:0;
+  color:var(--text);
+  font:inherit;
+  font-weight:700;
+  cursor:pointer;
+  text-decoration:none;
+}
+.month-filter-status .month-all-tasks-link:hover,
+.month-filter-status .month-all-tasks-link:focus-visible{
+  color:var(--primary);
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
