@@ -17,12 +17,12 @@
     const status = workspace.querySelector('.month-filter-status');
     if (status) {
       const label = status.querySelector(':scope > span');
-      if (label && !status.querySelector('[data-month-all-tasks]')) {
+      if (label && label.textContent.trim() === 'Все задачи' && !status.querySelector('[data-month-all-tasks]')) {
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'month-all-tasks-link';
         button.dataset.monthAllTasks = '1';
-        button.textContent = label.textContent || 'Все задачи';
+        button.textContent = 'Все задачи';
         label.replaceWith(button);
       }
     }
