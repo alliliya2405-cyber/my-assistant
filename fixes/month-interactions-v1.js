@@ -8,9 +8,15 @@
     const calendarCard = workspace.querySelector('.month-calendar-card');
     if (calendarCard) {
       calendarCard.classList.remove('collapsible-entry', 'global-collapsed');
-      calendarCard.querySelector(':scope > .global-collapse-bar')?.remove();
+      calendarCard.querySelectorAll('.global-collapse-bar').forEach(x => x.remove());
+      calendarCard.style.removeProperty('max-height');
+      calendarCard.style.removeProperty('height');
+      calendarCard.style.removeProperty('overflow');
       Array.from(calendarCard.children).forEach(child => {
-        if (child instanceof HTMLElement) child.hidden = false;
+        if (child instanceof HTMLElement) {
+          child.hidden = false;
+          child.style.removeProperty('display');
+        }
       });
     }
 
@@ -23,6 +29,7 @@
         button.className = 'month-all-tasks-link';
         button.dataset.monthAllTasks = '1';
         button.textContent = 'Все задачи';
+        button.setAttribute('aria-label', 'Открыть раздел со всеми задачами');
         label.replaceWith(button);
       }
     }
@@ -32,7 +39,11 @@
     const button = event.target.closest('[data-month-all-tasks]');
     if (!button) return;
     event.preventDefault();
-    document.querySelector('[data-route="tasks"]')?.click();
+    event.stopPropagation();
+    route = 'tasks';
+    sessionStorage.setItem('myAssistant.route', route);
+    document.body.classList.remove('menu-open');
+    render();
   });
 
   let scheduled = false;
