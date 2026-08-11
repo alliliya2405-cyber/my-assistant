@@ -1214,3 +1214,7 @@ h4{font-size:14px;line-height:1.4}
   .month-task-preview-item span{display:block}
   .month-day-panel{order:-1}
 }
+
+
+/* Application UX navigation v1 */
+.nav-primary{font-weight:800;color:#fff!important;margin-bottom:6px}.nav-section{display:grid;gap:3px}.nav-section-toggle{display:flex!important;align-items:center;justify-content:space-between;width:100%;font-weight:750;color:#e5e7eb!important}.nav-section-toggle .nav-chevron{font-size:20px;line-height:1;transition:transform .18s ease;color:#7f8aa3}.nav-section.open .nav-chevron{transform:rotate(90deg)}.nav-section-items{display:none;padding-left:8px}.nav-section.open .nav-section-items{display:grid;gap:2px}.nav-section-items button{padding:9px 12px!important;font-size:14px}.nav-section-items button.active{box-shadow:inset 3px 0 0 var(--primary2)}

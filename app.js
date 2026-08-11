@@ -446,13 +446,32 @@ const bar=p=>`<div class="progress"><span style="width:${Math.max(0,Math.min(100
 const empty=(t='Пока нет данных')=>`<div class="empty">${esc(t)}</div>`;
 function toast(text){const el=document.createElement('div');el.className='toast';el.textContent=text;$('#toastRoot').append(el);setTimeout(()=>el.remove(),3200)}
 const NAV=[
-['Сегодня',[['dashboard','Панель'],['day','День'],['week','Неделя'],['month','Месяц']]],
-['Работа',[['projects','Проекты'],['tasks','Задачи и Kanban'],['team','Команда'],['resources','Ресурсная карта'],['meetings','Совещания'],['reports','Отчёты'],['calendar','Обмен календарём']]],
-['Жизнь',[['health','Здоровье'],['family','Семья'],['education','Образование'],['leisure','Досуг']]],
-['Знания',[['quotes','Цитаты дня'],['notes','Заметки'],['library','Библиотека'],['reflection','Рефлексия'],['board','Доска']]],
-['Система',[['search','Поиск'],['history','Хронология'],['templates','Шаблоны и настройки']]]];
-const titles=Object.fromEntries(NAV.flatMap(g=>g[1]));
-function buildNav(){$('#nav').innerHTML=NAV.map(([g,items])=>`<div class="nav-group">${g}</div>${items.map(([id,n])=>`<button data-route="${id}" class="${route===id?'active':''}">${n}</button>`).join('')}`).join('');$$('[data-route]').forEach(b=>b.onclick=()=>{route=b.dataset.route;sessionStorage.setItem('myAssistant.route',route);document.body.classList.remove('menu-open');render()})}
+  {id:'home',label:'Главная',route:'dashboard'},
+  {id:'planning',label:'Планирование',items:[['day','Сегодня'],['week','Неделя'],['month','Месяц'],['tasks','Задачи']]},
+  {id:'projects-area',label:'Проекты',items:[['projects','Все проекты'],['meetings','Совещания'],['team','Команда'],['resources','Ресурсная карта'],['reports','Отчёты']]},
+  {id:'life',label:'Жизнь',items:[['health','Здоровье'],['family','Семья'],['education','Образование'],['leisure','Досуг']]},
+  {id:'knowledge',label:'Знания',items:[['notes','Заметки'],['library','Библиотека'],['reflection','Рефлексия'],['board','Доска'],['quotes','Цитаты дня']]},
+  {id:'more',label:'Ещё',items:[['search','Поиск'],['history','Хронология'],['templates','Настройки и шаблоны'],['calendar','Обмен календарём']]}
+];
+const navRoutes=()=>NAV.flatMap(section=>section.route?[[section.route,section.label]]:(section.items||[]));
+const titles=Object.fromEntries(navRoutes());
+function buildNav(){
+  const storedOpen=sessionStorage.getItem('myAssistant.navSection')||'';
+  const activeSection=NAV.find(section=>section.route===route||(section.items||[]).some(([id])=>id===route));
+  const openSection=storedOpen||activeSection?.id||'planning';
+  $('#nav').innerHTML=NAV.map(section=>{
+    if(section.route)return `<button data-route="${section.route}" class="nav-primary ${route===section.route?'active':''}">${section.label}</button>`;
+    const isOpen=section.id===openSection||section.id===activeSection?.id;
+    return `<div class="nav-section ${isOpen?'open':''}" data-nav-section="${section.id}"><button class="nav-section-toggle" type="button" aria-expanded="${isOpen}"><span>${section.label}</span><span class="nav-chevron">›</span></button><div class="nav-section-items">${section.items.map(([id,n])=>`<button data-route="${id}" class="${route===id?'active':''}">${n}</button>`).join('')}</div></div>`
+  }).join('');
+  $$('[data-route]').forEach(b=>b.onclick=()=>{route=b.dataset.route;sessionStorage.setItem('myAssistant.route',route);document.body.classList.remove('menu-open');render()});
+  $$('.nav-section-toggle').forEach(button=>button.onclick=()=>{
+    const section=button.closest('[data-nav-section]'),willOpen=!section.classList.contains('open');
+    $$('.nav-section').forEach(item=>{item.classList.remove('open');item.querySelector('.nav-section-toggle')?.setAttribute('aria-expanded','false')});
+    if(willOpen){section.classList.add('open');button.setAttribute('aria-expanded','true');sessionStorage.setItem('myAssistant.navSection',section.dataset.navSection)}
+    else sessionStorage.removeItem('myAssistant.navSection')
+  })
+}
 
 const collapsibleRoutes={
   dashboard:{selector:'#content > .card, #content .grid > .card',label:'Панель'},
