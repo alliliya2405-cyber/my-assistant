@@ -9,19 +9,28 @@
   const tokens=s=>norm(s).split(/\s+/).filter(Boolean);
   const escRe=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
   const cleanTitle=value=>String(value||'')
-    .trim()
-    .replace(/^[—–:;,.-]+\s*/,'')
+    .trim().replace(/^[—–:;,.-]+\s*/,'')
     .replace(/^(?:должен|должна|должны|нужно|необходимо|поручено|поручить)\s+/i,'')
     .replace(/^(?:ответственн(?:ый|ая|ые)|исполнитель)\s*:\s*/i,'')
-    .trim()
-    .replace(/^[—–:;,.-]+\s*/,'')
-    .replace(/^./,c=>c.toUpperCase());
+    .trim().replace(/^[—–:;,.-]+\s*/,'').replace(/^./,c=>c.toUpperCase());
 
   const splitSource=text=>String(text||'').split(/\n+/).flatMap(line=>{
     const value=line.trim();if(!value)return[];
     if(value.includes('|'))return[value];
     return value.split(/(?<![А-ЯЁA-Z]\.)(?<=[.!?;])\s+/).map(x=>x.trim()).filter(x=>x.length>3);
   });
+
+  function mentionedPeople(text,people=[]){
+    const sourceTokens=tokens(text);
+    return people.filter(person=>{
+      const surname=tokens(person.name)[0]||'';
+      if(!surname)return false;
+      if(sourceTokens.includes(surname))return true;
+      if(surname.length<5)return false;
+      const stem=surname.slice(0,Math.max(5,surname.length-2));
+      return sourceTokens.some(t=>t.startsWith(stem));
+    });
+  }
 
   function assignmentCue(raw,person,sourceType){
     if(sourceType==='actionItems')return ACTION_RE.test(raw)||ASSIGN_RE.test(raw)||raw.includes('|');
@@ -46,7 +55,10 @@
   api.extractMeetingTaskCandidates=(meeting,{people=[],projects=[]}={})=>{
     const rows=[],seen=new Set();
     [['actionItems',meeting.actionItems],['decisions',meeting.decisions],['notes',meeting.notes]].forEach(([sourceType,text])=>splitSource(text).forEach(raw=>{
-      const pipe=raw.split('|').map(x=>x.trim()),person=api.matchPerson(pipe.length>1?pipe[0]:raw,people);
+      const pipe=raw.split('|').map(x=>x.trim());
+      const personText=pipe.length>1?pipe[0]:raw;
+      if(mentionedPeople(personText,people).length!==1)return;
+      const person=api.matchPerson(personText,people);
       if(!person)return;
       if(pipe.length<2&&!assignmentCue(raw,person,sourceType))return;
       if(pipe.length<2&&!ACTION_RE.test(raw)&&!ASSIGN_RE.test(raw))return;
