@@ -1,0 +1,62 @@
+/* Projects section polish v1
+   Visual hierarchy only. No data or business-logic changes. */
+
+body.route-projects #content,
+body.route-meetings #content,
+body.route-team #content,
+body.route-resources #content,
+body.route-reports #content{max-width:1440px}
+
+body.route-projects .projects-header{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:center;background:linear-gradient(135deg,#f7f8ff 0%,#f1efff 100%);border:1px solid #e4e3f6}
+body.route-projects .projects-header .muted{max-width:760px;line-height:1.5}
+body.route-projects .sticky-project-toolbar{position:sticky;top:0;z-index:4;padding:12px 0;background:linear-gradient(180deg,#f5f7fb 78%,rgba(245,247,251,0))}
+body.route-projects .sticky-project-toolbar .search-input{min-width:min(420px,100%)}
+body.route-projects .project-card{border:1px solid #e3e7ef}
+body.route-projects .project-card.expanded{box-shadow:0 12px 34px rgba(15,23,42,.07)}
+body.route-projects .project-goal{font-size:15px;line-height:1.55;color:#344054}
+body.route-projects .project-meta{line-height:1.45}
+
+body.route-meetings #content > .toolbar:first-child{padding:14px 16px;margin-bottom:16px;border:1px solid #e3e7ef;border-radius:18px;background:#fff}
+body.route-meetings .meeting-card{padding:22px;margin-bottom:16px!important;border:1px solid #e3e7ef;box-shadow:0 8px 24px rgba(15,23,42,.045)}
+body.route-meetings .meeting-card > .toolbar{align-items:flex-start;gap:18px;padding-bottom:14px;margin-bottom:14px;border-bottom:1px solid #edf0f4}
+body.route-meetings .meeting-card > .toolbar h2{margin:0 0 5px;font-size:21px;line-height:1.25}
+body.route-meetings .meeting-card > .toolbar .actions{justify-content:flex-end;flex-wrap:wrap}
+body.route-meetings .meeting-card > p{margin:12px 0;line-height:1.55;color:#344054}
+body.route-meetings .meeting-actions-preview{margin:16px 0;padding:14px;border-radius:14px;background:#f7f7fc;border:1px solid #ebeaf7}
+body.route-meetings .meeting-action-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid #e7e8ef}
+body.route-meetings .meeting-action-row:first-of-type{margin-top:8px}
+body.route-meetings .meeting-action-row > div{display:grid;gap:3px;min-width:0}
+
+body.route-team .hero,body.route-resources .hero,body.route-reports .hero{padding:24px 28px;margin-bottom:18px;border-radius:22px;background:linear-gradient(135deg,#f3f5ff 0%,#f7f3ff 100%);border:1px solid #e2e4f4}
+body.route-team .hero h2,body.route-resources .hero h2,body.route-reports .hero h2{margin:5px 0 7px}
+body.route-team .team-registry{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+body.route-team .team-person-card{padding:20px;min-width:0}
+body.route-team .team-person-card > .toolbar{align-items:flex-start;gap:12px}
+body.route-team .team-person-card h2{margin:0 0 5px;font-size:20px}
+body.route-team .team-project-list{display:grid;gap:8px;margin:14px 0 18px}
+body.route-team .team-project-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:start;padding:11px 12px;border-radius:12px;background:#f8f9fc}
+body.route-team .team-person-card .section-title.compact{margin:16px 0 8px}
+body.route-team .team-person-card .list-row{grid-template-columns:minmax(0,1fr) auto;gap:12px}
+
+body.route-resources #content > .grid.cols-2{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+body.route-resources #content > .grid.cols-2 > .card{padding:20px;min-width:0;border:1px solid #e3e7ef;box-shadow:0 7px 22px rgba(15,23,42,.04)}
+body.route-resources #content > .grid.cols-2 > .card h2{margin:0 0 6px;font-size:20px}
+body.route-resources #content > .grid.cols-2 > .card > .item-meta{display:inline-flex;padding:5px 9px;margin-bottom:12px;border-radius:999px;background:#f2f0ff;color:#6255d9;font-size:12px}
+body.route-resources .list-row{padding:12px 0;border-radius:0;border-width:1px 0 0;background:transparent;box-shadow:none}
+body.route-resources .list-row:first-child{border-top:0}
+
+body.route-reports .report-command-center{padding:20px;margin-bottom:18px}
+body.route-reports .report-command-center h3{margin-top:0}
+body.route-reports .report-command-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+body.route-reports .report-employee{margin:18px 0;padding:18px;border:1px solid #e3e7ef;border-radius:18px;background:#fff;box-shadow:0 5px 18px rgba(15,23,42,.035)}
+body.route-reports .report-employee > h3{margin:0 0 12px;font-size:18px}
+body.route-reports .report-table-wrap{overflow-x:auto;overflow-y:visible;border:1px solid #e5e7eb;border-radius:14px}
+body.route-reports .report-table{min-width:980px}
+body.route-reports .report-table th{position:sticky;top:0;z-index:1;background:#f6f7fb;white-space:nowrap}
+body.route-reports .report-table td{vertical-align:top;line-height:1.45}
+body.route-reports .report-row-actions{white-space:nowrap}
+
+body.route-meetings .global-collapse-controls,body.route-team .global-collapse-controls,body.route-resources .global-collapse-controls,body.route-reports .global-collapse-controls,body.route-meetings .global-collapse-bar,body.route-team .global-collapse-bar,body.route-resources .global-collapse-bar,body.route-reports .global-collapse-bar{display:none!important}
+
+@media(max-width:1100px){body.route-projects .projects-header{grid-template-columns:1fr}body.route-team .team-registry,body.route-resources #content > .grid.cols-2{grid-template-columns:1fr}body.route-reports .report-command-grid{grid-template-columns:1fr}}
+@media(max-width:760px){body.route-meetings .meeting-card > .toolbar,body.route-team .team-person-card > .toolbar{display:grid;grid-template-columns:1fr}body.route-meetings .meeting-card > .toolbar .actions{justify-content:flex-start}body.route-meetings .meeting-action-row,body.route-team .team-project-row,body.route-team .team-person-card .list-row{grid-template-columns:1fr}body.route-projects .sticky-project-toolbar{position:static}}
