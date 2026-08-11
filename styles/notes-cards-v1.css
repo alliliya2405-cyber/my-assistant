@@ -1,0 +1,56 @@
+/* Notes Cards v1
+   Visual hierarchy only. No data or business-logic changes. */
+
+.notes-view > .toolbar {
+  margin-bottom: 18px;
+}
+
+.notes-view > .grid.cols-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+
+.notes-view > .grid.cols-2 > .card {
+  padding: 20px;
+  min-width: 0;
+  overflow: visible;
+}
+
+.notes-view > .grid.cols-2 > .card > .toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 12px;
+}
+
+.notes-view > .grid.cols-2 > .card > .toolbar h3 {
+  margin: 0;
+  line-height: 1.3;
+  overflow-wrap: break-word;
+}
+
+.notes-view > .grid.cols-2 > .card > .toolbar .actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.notes-view > .grid.cols-2 > .card > p {
+  margin: 0 0 12px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.notes-view > .grid.cols-2 > .card .item-meta {
+  line-height: 1.45;
+}
+
+@media (max-width: 900px) {
+  .notes-view > .grid.cols-2 {
+    grid-template-columns: 1fr;
+  }
+}
