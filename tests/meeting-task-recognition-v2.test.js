@@ -1,6 +1,6 @@
 'use strict';
 const assert=require('assert');
-const recognition=require('../fixes/meeting-task-recognition-v2.js');
+const recognition=require('../fixes/meeting-task-recognition-v2-cleanup.js');
 
 const people=[
   {id:'a',name:'Абдуллина Л.Э.',projectIds:['p1','p3']},
