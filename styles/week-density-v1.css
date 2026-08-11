@@ -1,0 +1,78 @@
+/* Planning / Week density v1
+   Visual-only layer. No data, routes or calendar logic changes. */
+
+.week-workspace{gap:10px}
+
+/* Keep weekly totals available, but reduce the vertical block before tasks. */
+.week-summary{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  padding:0;
+  overflow:visible;
+  border:0;
+  background:transparent;
+}
+.week-summary>div{
+  display:inline-flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:7px;
+  min-width:0;
+  padding:6px 9px;
+  border:1px solid rgba(226,232,240,.95)!important;
+  border-radius:999px;
+  background:rgba(255,255,255,.82);
+}
+.week-summary span{font-size:10px}
+.week-summary strong{font-size:14px}
+
+/* Seven day selector should read like navigation, not another card dashboard. */
+.week-day-tabs{
+  gap:5px;
+  padding:5px;
+  border-radius:13px;
+  box-shadow:0 4px 14px rgba(30,41,59,.04);
+}
+.week-day-tab{
+  gap:1px 6px;
+  padding:7px 8px;
+  border-radius:10px;
+}
+.week-day-tab strong{font-size:18px}
+.week-day-tab span{font-size:10px}
+.week-day-tab small{font-size:9px}
+.week-day-tab.active{box-shadow:none}
+
+/* Bring the selected day's real tasks closer to the day selector. */
+.week-focus-head{
+  gap:8px;
+  padding:9px 11px;
+}
+.week-day-arrow{
+  width:34px;
+  height:34px;
+}
+.week-focus-title span{font-size:14px}
+.week-focus-title strong{font-size:10px}
+.week-focus-tasks{
+  min-height:150px;
+  padding:10px;
+}
+.week-focus-day>.week-day-add{
+  width:calc(100% - 20px);
+  margin:0 10px 10px;
+}
+
+@media(max-width:760px){
+  .week-workspace{gap:8px}
+  .week-summary{gap:5px}
+  .week-summary>div{padding:5px 8px}
+  .week-summary span{font-size:9px}
+  .week-summary strong{font-size:13px}
+  .week-day-tabs{gap:3px;padding:4px}
+  .week-day-tab{padding:6px 2px}
+  .week-day-tab strong{font-size:16px}
+  .week-focus-head{padding:8px 9px}
+  .week-focus-tasks{padding:8px}
+}
