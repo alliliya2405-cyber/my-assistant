@@ -10,7 +10,9 @@
     content.classList.toggle('notes-view', isNotes);
     if (!isNotes) return;
 
-    content.querySelectorAll('.grid.cols-2 > .card').forEach(card => {
+    const cards = content.querySelectorAll('article.card, .grid.cols-2 > .card, .card');
+    cards.forEach(card => {
+      if (card.closest('.modal')) return;
       card.classList.remove('collapsible-entry', 'global-collapsed', 'universal-scroll-area');
       card.removeAttribute('data-collapse-ready');
       card.querySelectorAll('.global-collapse-bar').forEach(x => x.remove());
@@ -28,7 +30,11 @@
     content.querySelectorAll('.global-collapse-controls').forEach(x => x.remove());
     content.querySelectorAll('button').forEach(button => {
       const text = button.textContent.trim();
-      if (text === 'Свернуть все' || text === 'Развернуть все') button.remove();
+      if (text === 'Свернуть все' || text === 'Развернуть все') {
+        const host = button.closest('.global-collapse-controls, .actions');
+        if (host && host.querySelectorAll('button').length <= 2) host.remove();
+        else button.remove();
+      }
     });
   }
 
