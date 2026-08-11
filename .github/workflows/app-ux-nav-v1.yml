@@ -1,38 +1,29 @@
-name: Application UX navigation v1
-
+name: Application UX Navigation V1
 on:
   push:
-    branches:
-      - application-ux-structure-v1
-    paths:
-      - .github/workflows/app-ux-nav-v1.yml
-
+    branches: [application-ux-structure-v1]
+    paths: [.github/workflows/app-ux-nav-v1.yml]
 permissions:
   contents: write
-
 jobs:
-  patch-and-validate:
+  patch:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           ref: application-ux-structure-v1
           fetch-depth: 0
-
-      - name: Patch navigation structure safely
-        shell: python
+      - name: Patch files
         run: |
+          cat > /tmp/patch_nav.py <<'PY'
           from pathlib import Path
           import re
-
-          app = Path('app.js')
-          text = app.read_text(encoding='utf-8')
-          pattern = re.compile(r"const NAV=\[.*?function buildNav\(\)\{.*?\}\n", re.S)
-          matches = pattern.findall(text)
-          if len(matches) != 1:
-              raise SystemExit(f'Expected exactly one NAV/buildNav block, found {len(matches)}')
-
-          replacement = r'''const NAV=[
+          app=Path('app.js')
+          text=app.read_text(encoding='utf-8')
+          pattern=re.compile(r"const NAV=\[.*?function buildNav\(\)\{.*?\}\n",re.S)
+          if len(pattern.findall(text))!=1:
+              raise SystemExit('Expected exactly one old navigation block')
+          replacement="""const NAV=[
             {id:'home',label:'Главная',route:'dashboard'},
             {id:'planning',label:'Планирование',items:[['day','Сегодня'],['week','Неделя'],['month','Месяц'],['tasks','Задачи']]},
             {id:'projects-area',label:'Проекты',items:[['projects','Все проекты'],['meetings','Совещания'],['team','Команда'],['resources','Ресурсная карта'],['reports','Отчёты']]},
@@ -59,65 +50,54 @@ jobs:
               else sessionStorage.removeItem('myAssistant.navSection')
             })
           }
-'''
-          app.write_text(pattern.sub(replacement, text, count=1), encoding='utf-8')
-
-          styles = Path('styles.css')
-          css = styles.read_text(encoding='utf-8')
-          marker = '/* Application UX navigation v1 */'
-          if marker in css:
-              raise SystemExit('Navigation CSS marker already exists; refusing duplicate patch')
-          css += '''\n\n/* Application UX navigation v1 */\n.nav-primary{font-weight:800;color:#fff!important;margin-bottom:6px}.nav-section{display:grid;gap:3px}.nav-section-toggle{display:flex!important;align-items:center;justify-content:space-between;width:100%;font-weight:750;color:#e5e7eb!important}.nav-section-toggle .nav-chevron{font-size:20px;line-height:1;transition:transform .18s ease;color:#7f8aa3}.nav-section.open .nav-chevron{transform:rotate(90deg)}.nav-section-items{display:none;padding-left:8px}.nav-section.open .nav-section-items{display:grid;gap:2px}.nav-section-items button{padding:9px 12px!important;font-size:14px}.nav-section-items button.active{box-shadow:inset 3px 0 0 var(--primary2)}\n'''
-          styles.write_text(css, encoding='utf-8')
-
-          index = Path('index.html')
-          html = index.read_text(encoding='utf-8')
-          if 'styles.css?v=16' not in html or 'app.js?v=18' not in html:
-              raise SystemExit('Unexpected cache versions; refusing to patch index.html')
-          html = html.replace('styles.css?v=16','styles.css?v=17',1).replace('app.js?v=18','app.js?v=19',1)
-          index.write_text(html, encoding='utf-8')
-
-      - name: Validate JavaScript syntax
-        run: node --check app.js && node --check core/storage/data-store.js && node --check core/models/task.js
-
-      - name: Validate routes preserved
-        shell: python
+          """
+          app.write_text(pattern.sub(replacement,text,count=1),encoding='utf-8')
+          styles=Path('styles.css')
+          css=styles.read_text(encoding='utf-8')
+          marker='/* Application UX navigation v1 */'
+          if marker in css: raise SystemExit('Navigation CSS already exists')
+          css += "\n\n/* Application UX navigation v1 */\n.nav-primary{font-weight:800;color:#fff!important;margin-bottom:6px}.nav-section{display:grid;gap:3px}.nav-section-toggle{display:flex!important;align-items:center;justify-content:space-between;width:100%;font-weight:750;color:#e5e7eb!important}.nav-section-toggle .nav-chevron{font-size:20px;line-height:1;transition:transform .18s ease;color:#7f8aa3}.nav-section.open .nav-chevron{transform:rotate(90deg)}.nav-section-items{display:none;padding-left:8px}.nav-section.open .nav-section-items{display:grid;gap:2px}.nav-section-items button{padding:9px 12px!important;font-size:14px}.nav-section-items button.active{box-shadow:inset 3px 0 0 var(--primary2)}\n"
+          styles.write_text(css,encoding='utf-8')
+          index=Path('index.html')
+          html=index.read_text(encoding='utf-8')
+          if html.count('styles.css?v=16')!=1 or html.count('app.js?v=18')!=1:
+              raise SystemExit('Unexpected cache versions')
+          index.write_text(html.replace('styles.css?v=16','styles.css?v=17',1).replace('app.js?v=18','app.js?v=19',1),encoding='utf-8')
+          PY
+          python /tmp/patch_nav.py
+      - name: Validate syntax and routes
         run: |
+          node --check app.js
+          node --check core/storage/data-store.js
+          node --check core/models/task.js
+          python - <<'PY'
           from pathlib import Path
           import re
           text=Path('app.js').read_text(encoding='utf-8')
           expected={'dashboard','day','week','month','projects','tasks','team','resources','meetings','reports','calendar','health','family','education','leisure','quotes','notes','library','reflection','board','search','history','templates'}
           block=re.search(r"const NAV=\[(.*?)\];\n\s*const navRoutes",text,re.S)
-          if not block: raise SystemExit('NAV block not found')
+          if not block: raise SystemExit('NAV block missing')
           found=set(re.findall(r"\['([^']+)','[^']+'\]",block.group(1)))
-          route=re.search(r"route:'([^']+)'",block.group(1))
-          if route: found.add(route.group(1))
-          if found != expected:
-              raise SystemExit(f'Route mismatch: missing={sorted(expected-found)} extra={sorted(found-expected)}')
-          print(f'All {len(expected)} routes preserved')
-
-      - name: Validate intended diff
-        shell: bash
+          m=re.search(r"route:'([^']+)'",block.group(1))
+          if m: found.add(m.group(1))
+          if found!=expected: raise SystemExit(f'Route mismatch: {sorted(expected-found)} / {sorted(found-expected)}')
+          print('All routes preserved:',len(found))
+          PY
+      - name: Validate diff
         run: |
-          set -euo pipefail
           git diff --check
-          changed="$(git diff --name-only | sort)"
-          expected=$(printf '%s\n' app.js index.html styles.css | sort)
-          test "$changed" = "$expected"
+          test "$(git diff --name-only | sort | tr '\n' ' ')" = "app.js index.html styles.css "
           grep -F "const navRoutes=()=>NAV.flatMap" app.js
           grep -F "data-nav-section" app.js
           grep -F "/* Application UX navigation v1 */" styles.css
-          grep -F 'styles.css?v=17' index.html
-          grep -F 'app.js?v=19' index.html
-
-      - name: Commit UX navigation and remove temporary workflow
-        shell: bash
+          grep -F "styles.css?v=17" index.html
+          grep -F "app.js?v=19" index.html
+      - name: Commit changes
         run: |
-          set -euo pipefail
           rm .github/workflows/app-ux-nav-v1.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add app.js styles.css index.html .github/workflows/app-ux-nav-v1.yml
+          git add app.js index.html styles.css .github/workflows/app-ux-nav-v1.yml
           git diff --cached --check
           git commit -m "Implement application navigation UX v1"
           git push origin HEAD:application-ux-structure-v1
