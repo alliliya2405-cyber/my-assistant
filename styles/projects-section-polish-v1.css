@@ -27,10 +27,10 @@ body.route-meetings .meeting-action-row{display:grid;grid-template-columns:minma
 body.route-meetings .meeting-action-row:first-of-type{margin-top:8px}
 body.route-meetings .meeting-action-row > div{display:grid;gap:3px;min-width:0}
 
-body.route-team .hero,body.route-resources .hero,body.route-reports .hero{padding:24px 28px;margin-bottom:18px;border-radius:22px;background:linear-gradient(135deg,#f3f5ff 0%,#f7f3ff 100%);border:1px solid #e2e4f4;color:#202637}
-body.route-team .hero h2,body.route-resources .hero h2,body.route-reports .hero h2{margin:5px 0 7px;color:#202637}
-body.route-team .hero p,body.route-resources .hero p,body.route-reports .hero p{color:#667085}
-body.route-team .hero .eyebrow,body.route-resources .hero .eyebrow,body.route-reports .hero .eyebrow{color:#7a6fe8}
+body.route-team .hero,body.route-resources .hero,body.route-reports .hero{padding:24px 28px;margin-bottom:18px;border-radius:22px;background:linear-gradient(135deg,#ffffff 0%,#f1efff 100%)!important;border:1px solid #deddf1;color:#1d2433!important}
+body.route-team .hero h2,body.route-resources .hero h2,body.route-reports .hero h2{margin:5px 0 7px;color:#1d2433!important}
+body.route-team .hero p,body.route-resources .hero p,body.route-reports .hero p{color:#596579!important}
+body.route-team .hero .eyebrow,body.route-resources .hero .eyebrow,body.route-reports .hero .eyebrow{color:#6d5dfc!important}
 body.route-team .team-registry{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 body.route-team .team-person-card{padding:20px;min-width:0}
 body.route-team .team-person-card > .toolbar{align-items:flex-start;gap:12px}
