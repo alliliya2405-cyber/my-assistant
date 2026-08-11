@@ -1,0 +1,54 @@
+/* Leisure Cards v1
+   Visual hierarchy only. No data or business-logic changes. */
+
+.leisure-view > .toolbar {
+  margin-bottom: 18px;
+}
+
+.leisure-view > .grid.cols-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+
+.leisure-view > .grid.cols-2 > .card {
+  padding: 20px;
+  min-width: 0;
+  overflow: visible;
+}
+
+.leisure-view > .grid.cols-2 > .card > .toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 12px;
+}
+
+.leisure-view > .grid.cols-2 > .card > .toolbar h3 {
+  margin: 0;
+  line-height: 1.3;
+  overflow-wrap: break-word;
+}
+
+.leisure-view > .grid.cols-2 > .card > .toolbar .actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.leisure-view > .grid.cols-2 > .card > p {
+  margin: 0 0 12px;
+  line-height: 1.55;
+}
+
+.leisure-view > .grid.cols-2 > .card .item-meta {
+  line-height: 1.45;
+}
+
+@media (max-width: 900px) {
+  .leisure-view > .grid.cols-2 {
+    grid-template-columns: 1fr;
+  }
+}
