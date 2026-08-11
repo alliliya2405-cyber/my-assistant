@@ -1,10 +1,21 @@
 /* Reflection Cards v1
    Visual hierarchy only. No data or business-logic changes. */
 
+.reflection-view .global-collapse-bar,
+.reflection-view .global-collapse-controls {
+  display: none !important;
+}
+
 .reflection-view .card {
   padding: 22px;
   min-width: 0;
-  overflow: visible;
+  overflow: visible !important;
+  max-height: none !important;
+  height: auto !important;
+}
+
+.reflection-view .card > * {
+  display: revert;
 }
 
 .reflection-view .card > .toolbar,
