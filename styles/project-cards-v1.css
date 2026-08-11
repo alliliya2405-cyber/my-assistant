@@ -1,0 +1,92 @@
+/* Project Cards v1
+   Visual-only refinement for the projects list. */
+
+.projects-header{
+  padding:18px 20px;
+  box-shadow:0 8px 24px rgba(15,23,42,.05);
+}
+.projects-header h2{margin:3px 0 5px}
+.projects-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+.project-sort-list{display:grid;gap:10px}
+.project-card{margin-bottom:0!important;box-shadow:0 5px 16px rgba(15,23,42,.045)}
+.project-card.collapsed{box-shadow:none}
+.project-summary{
+  grid-template-columns:34px minmax(0,1fr) auto;
+  gap:10px;
+  padding:13px 15px;
+}
+.project-toggle{
+  width:32px;
+  height:32px;
+  border-radius:10px;
+  font-size:22px;
+}
+.project-summary-main{min-width:0}
+.project-summary-main .chips{gap:5px;margin-bottom:3px}
+.project-summary-main .chip{padding:3px 7px;font-size:11px}
+.project-summary-main h2{
+  margin:2px 0 5px;
+  font-size:17px;
+  line-height:1.25;
+}
+.project-compact-meta{
+  gap:7px;
+  font-size:12px;
+}
+.project-compact-meta span{padding-right:7px}
+
+.project-summary-actions{
+  align-items:center;
+  gap:5px;
+  flex-wrap:nowrap;
+}
+.project-summary-actions .btn{
+  padding:6px 9px;
+  font-size:12px;
+  border-radius:9px;
+  box-shadow:none;
+}
+.project-summary-actions [data-collapse-project]{display:none}
+.project-summary-actions .btn.danger{
+  background:transparent;
+  color:#9a6670;
+}
+.project-summary-actions .btn.danger:hover{background:#fff1f2;color:#b42318}
+.drag-handle{
+  opacity:.38;
+  padding:5px 3px;
+  cursor:grab;
+}
+.project-card:hover .drag-handle{opacity:.7}
+
+.project-card.expanded .project-summary{
+  background:linear-gradient(180deg,rgba(248,250,252,.9),rgba(255,255,255,.98));
+}
+.project-details{padding:0 15px 15px}
+.project-goal{margin:14px 0 10px}
+.project-meta{margin:9px 0 11px;gap:9px;font-size:12px}
+.project-inner-controls{margin-top:12px}
+
+@media(max-width:900px){
+  .project-summary{grid-template-columns:32px minmax(0,1fr)}
+  .project-summary-actions{
+    grid-column:2;
+    justify-content:flex-start;
+    flex-wrap:wrap;
+    padding-left:0!important;
+  }
+  .project-summary-actions .drag-handle{order:99}
+}
+
+@media(max-width:560px){
+  .projects-header{padding:15px}
+  .projects-actions{width:100%}
+  .projects-actions .btn{flex:1 1 auto}
+  .project-summary{padding:11px 12px;gap:8px}
+  .project-summary-main h2{font-size:16px}
+  .project-compact-meta span:nth-child(2){flex-basis:100%;border-right:0}
+  .project-summary-actions .btn{padding:6px 8px}
+  .project-summary-actions .btn.danger{margin-left:auto}
+  .project-details{padding:0 12px 12px}
+}
