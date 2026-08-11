@@ -1,0 +1,24 @@
+/* Month Collapse Fix v1
+   The universal collapse enhancer must not visually wrap the month calendar card. */
+
+.month-calendar-card.collapsible-entry,
+.month-calendar-card.global-collapsed{
+  max-height:none!important;
+  height:auto!important;
+  overflow:visible!important;
+  padding-top:inherit!important;
+}
+
+.month-calendar-card>.global-collapse-bar{
+  display:none!important;
+}
+
+.month-calendar-card.global-collapsed>*:not(.global-collapse-bar),
+.month-calendar-card.collapsible-entry>*:not(.global-collapse-bar){
+  display:block;
+}
+
+/* Preserve the month grid's own layout after neutralising global collapse. */
+.month-calendar-card .month-grid{
+  display:grid!important;
+}
