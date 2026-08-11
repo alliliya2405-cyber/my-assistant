@@ -38,9 +38,9 @@
 
 .life-grid .list-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
   padding: 14px 0;
-  gap: 14px;
+  gap: 10px;
   border: 0;
   border-top: 1px solid var(--border, #e5e7eb);
   border-radius: 0;
@@ -56,28 +56,32 @@
 
 .life-grid .list-row > div:first-child {
   min-width: 0;
-  width: auto;
+  width: 100%;
 }
 
 .life-grid .list-row b {
   display: block;
-  line-height: 1.3;
-  overflow-wrap: break-word;
+  width: 100%;
+  line-height: 1.35;
+  overflow-wrap: normal;
   word-break: normal;
 }
 
 .life-grid .list-row .item-meta {
-  margin-top: 5px;
+  margin-top: 6px;
+  width: 100%;
   line-height: 1.45;
-  overflow-wrap: break-word;
+  overflow-wrap: normal;
   word-break: normal;
 }
 
 .life-grid .list-row .actions {
   display: flex;
-  flex: 0 0 auto;
+  width: 100%;
   gap: 6px;
   align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
 }
 
 .life-grid .list-row .btn.small {
@@ -98,14 +102,5 @@
 
   .life-grid > .card {
     padding: 16px;
-  }
-
-  .life-grid .list-row {
-    grid-template-columns: 1fr;
-  }
-
-  .life-grid .list-row .actions {
-    width: 100%;
-    flex-wrap: wrap;
   }
 }
