@@ -1,0 +1,47 @@
+/* Library Cards v1
+   Visual hierarchy only. No data or business-logic changes. */
+
+.library-view > .grid.cols-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+
+.library-view > .grid.cols-2 > .card {
+  padding: 20px;
+  min-width: 0;
+  overflow: visible;
+}
+
+.library-view > .grid.cols-2 > .card > .toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 12px;
+}
+
+.library-view > .grid.cols-2 > .card > .toolbar h3 {
+  margin: 0;
+  line-height: 1.3;
+  overflow-wrap: break-word;
+}
+
+.library-view > .grid.cols-2 > .card > .toolbar .actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.library-view > .grid.cols-2 > .card > p,
+.library-view > .grid.cols-2 > .card .item-meta {
+  line-height: 1.5;
+  overflow-wrap: break-word;
+}
+
+@media (max-width: 900px) {
+  .library-view > .grid.cols-2 {
+    grid-template-columns: 1fr;
+  }
+}
