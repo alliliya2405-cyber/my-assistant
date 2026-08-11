@@ -1,0 +1,100 @@
+/* Board + Quotes v1
+   Visual hierarchy only. No data or business-logic changes. */
+
+.board-toolbar {
+  display: grid;
+  grid-template-columns: minmax(180px, 260px) minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  margin-bottom: 10px;
+}
+
+.board-toolbar > select {
+  min-height: 44px;
+}
+
+.board-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.board-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 12px;
+  background: var(--surface, #fff);
+  white-space: nowrap;
+}
+
+.board-control select {
+  min-height: 34px;
+}
+
+.board-hint {
+  margin: 8px 0 14px;
+  max-width: 1100px;
+}
+
+.board-scroll-container {
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 12px 34px rgba(15, 23, 42, .06);
+}
+
+.quotes-view .quote-controls {
+  display: grid;
+  grid-template-columns: auto minmax(260px, 1fr) minmax(180px, 240px) auto;
+  gap: 10px;
+  align-items: center;
+  margin-top: 18px;
+  margin-bottom: 18px;
+}
+
+.quotes-view #quoteList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.quotes-view #quoteList > .card,
+.quotes-view .quote-card {
+  min-width: 0;
+  overflow: visible;
+}
+
+.quotes-view .global-collapse-bar,
+.quotes-view .global-collapse-controls {
+  display: none !important;
+}
+
+.quotes-view .card.collapsible-entry,
+.quotes-view .card.global-collapsed,
+.quotes-view .card.universal-scroll-area {
+  max-height: none !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+@media (max-width: 1050px) {
+  .board-toolbar {
+    grid-template-columns: 1fr;
+  }
+  .quotes-view .quote-controls {
+    grid-template-columns: 1fr 1fr;
+  }
+  .quotes-view #quoteList {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .quotes-view .quote-controls {
+    grid-template-columns: 1fr;
+  }
+}
