@@ -8,11 +8,7 @@
   const norm=s=>String(s||'').toLowerCase().replace(/ё/g,'е').replace(/[«»"'()]/g,' ').replace(/[^\p{L}\p{N}]+/gu,' ').trim();
   const tokens=s=>norm(s).split(/\s+/).filter(Boolean);
   const escRe=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-  const cleanTitle=value=>String(value||'')
-    .trim().replace(/^[—–:;,.-]+\s*/,'')
-    .replace(/^(?:должен|должна|должны|нужно|необходимо|поручено|поручить)\s+/i,'')
-    .replace(/^(?:ответственн(?:ый|ая|ые)|исполнитель)\s*:\s*/i,'')
-    .trim().replace(/^[—–:;,.-]+\s*/,'').replace(/^./,c=>c.toUpperCase());
+  const cleanTitle=value=>String(value||'').trim().replace(/^[—–:;,.-]+\s*/,'').replace(/^(?:должен|должна|должны|нужно|необходимо|поручено|поручить)\s+/i,'').replace(/^(?:ответственн(?:ый|ая|ые)|исполнитель)\s*:\s*/i,'').trim().replace(/^[—–:;,.-]+\s*/,'').replace(/^./,c=>c.toUpperCase());
 
   const splitSource=text=>String(text||'').split(/\n+/).flatMap(line=>{
     const value=line.trim();if(!value)return[];
@@ -37,7 +33,7 @@
     const surname=tokens(person?.name)[0]||'',source=norm(raw),stem=surname.length>=5?surname.slice(0,Math.max(5,surname.length-2)):surname;
     if(!stem)return false;
     const assigned=new RegExp(`${escRe(stem)}[а-яa-z-]{0,8}\\s+(?:долж|нужно|необходимо|поруч|подготов|соглас|провер|сдел|отправ|разработ|организ|провед|состав|созда|обнов|доработ)`,'i').test(source);
-    const label=/(?:ответственн(?:ый|ая)|исполнитель)\s*:/.test(source);
+    const label=/(?:ответственн(?:ый|ая|ые)|исполнитель)\s*:/.test(String(raw||''));
     return label||assigned;
   }
 
