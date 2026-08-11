@@ -1,0 +1,26 @@
+/* Month Full Height v1
+   The month grid must show all six calendar weeks in the normal page flow.
+   It is intentionally excluded from the universal internal-scroll height cap. */
+
+.month-workspace .month-grid.universal-scroll-area,
+.month-workspace .editable-month-grid.universal-scroll-area{
+  max-height:none !important;
+  height:auto !important;
+  overflow-y:visible !important;
+}
+
+.month-workspace .month-calendar-card{
+  max-height:none !important;
+  height:auto !important;
+  overflow:visible !important;
+}
+
+/* Keep horizontal fallback only for genuinely narrow viewports. */
+@media(max-width:760px){
+  .month-workspace .month-grid.universal-scroll-area,
+  .month-workspace .editable-month-grid.universal-scroll-area{
+    max-height:none !important;
+    overflow-y:visible !important;
+    overflow-x:auto !important;
+  }
+}
