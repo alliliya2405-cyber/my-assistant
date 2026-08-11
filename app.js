@@ -645,7 +645,46 @@ function openQuote(q=null){
     persist('Цитата сохранена')
   },q?{...q,tagsText:(q.tags||[]).join(', '),featured:String(q.featured),favorite:String(q.favorite)}:{date:todayIso(),featured:'false',favorite:'false',category:'Развитие'})
 }
-function renderDashboard(){const today=state.tasks.filter(t=>t.date===todayIso()&&!t.done);const overdue=state.tasks.filter(t=>!t.done&&t.date&&t.date<todayIso()).sort((a,b)=>a.date.localeCompare(b.date));const urgent=state.tasks.filter(t=>!t.done&&(t.priority==='urgent'||t.priority==='priority')).slice(0,8);const undated=state.tasks.filter(t=>!t.done&&!t.date);const nextMeeting=state.meetings.filter(m=>m.date>=todayIso()).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time))[0];const recent=state.history.slice(0,4);const q=quoteOfDay();return `<div class="hero"><p class="eyebrow">Ваш день</p><h2>${overdue.length?`Сначала разберите ${overdue.length} просроченн${overdue.length===1?'ую задачу':'ых задач'}`:'Что важно сегодня?'}</h2><p>${nextMeeting?`Ближайшее совещание: ${esc(nextMeeting.title)} · ${fmt(nextMeeting.date)} ${esc(nextMeeting.time||'')}`:'Проекты, задачи и личные планы — в одном спокойном пространстве.'}</p></div>${q?`<section class="card dashboard-quote"><div class="quote-mark">“</div><blockquote>${esc(q.text)}</blockquote><div class="quote-meta"><b>${esc(q.author||'Автор не указан')}</b><button class="btn ghost small" data-route-quotes>Все цитаты</button></div></section>`:''}<div class="grid cols-4"><button class="card metric metric-action" data-dashboard-filter="overdue"><span>Просрочено</span><strong>${overdue.length}</strong></button><button class="card metric metric-action" data-dashboard-filter="today"><span>Сегодня</span><strong>${today.length}</strong></button><button class="card metric metric-action" data-dashboard-filter="undated"><span>Без даты</span><strong>${undated.length}</strong></button><button class="card metric metric-action" data-route-meetings><span>Ближайшие совещания</span><strong>${state.meetings.filter(m=>m.date>=todayIso()).length}</strong></button></div><div class="grid cols-2" style="margin-top:18px"><section class="card"><div class="section-title"><h2>${overdue.length?'Просрочено':'Сегодня'}</h2><button class="btn primary small" data-add-task>+ Задача</button></div><div class="list">${(overdue.length?overdue:today).slice(0,8).map(taskRow).join('')||empty()}</div></section><section class="card"><h2>Требует внимания</h2><div class="list">${urgent.map(taskRow).join('')||empty()}</div></section></div><section class="card" style="margin-top:18px"><div class="section-title"><h2>Продолжить работу</h2><button class="btn ghost small" data-route-history>Вся хронология</button></div><div class="list">${recent.map(x=>`<div class="list-row"><div><div class="item-title">${esc(x.title)}</div><div class="item-meta">${new Date(x.at).toLocaleString('ru-RU')}</div></div></div>`).join('')||empty('История изменений пока пуста')}</div></section>`}
+function renderDashboard(){
+  const todayKey=todayIso();
+  const today=state.tasks.filter(t=>t.date===todayKey&&!t.done).sort((a,b)=>(a.start||'99:99').localeCompare(b.start||'99:99'));
+  const overdue=state.tasks.filter(t=>!t.done&&t.date&&t.date<todayKey).sort((a,b)=>a.date.localeCompare(b.date));
+  const futureMeetings=state.meetings.filter(m=>m.date>=todayKey).sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||'')));
+  const nextMeeting=futureMeetings[0];
+  const activeProjects=state.projects.map(p=>{
+    const tasks=state.tasks.filter(t=>t.projectId===p.id),open=tasks.filter(t=>!t.done);
+    return {project:p,open:open.length,total:tasks.length,progress:tasks.length?Math.round(tasks.filter(t=>t.done).length/tasks.length*100):0}
+  }).filter(x=>x.open>0).sort((a,b)=>b.open-a.open).slice(0,3);
+  const q=quoteOfDay();
+  const dateLabel=new Date(todayKey+'T12:00:00').toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});
+  const summary=today.length?`Задач на сегодня: ${today.length}`:'На сегодня нет незавершённых задач';
+  return `<section class="home-today-head">
+    <div><p class="eyebrow">${esc(dateLabel)}</p><h2>Ваш день</h2><p>${summary}${overdue.length?` · ${overdue.length} просрочено`:''}</p></div>
+    <button class="btn primary" data-add-task>+ Добавить задачу</button>
+  </section>
+  <div class="home-dashboard-grid">
+    <section class="card home-today-card">
+      <div class="section-title"><div><p class="eyebrow">В фокусе</p><h2>Сегодня <span class="home-count">${today.length}</span></h2></div><button class="btn ghost small" data-dashboard-filter="today">Все задачи дня</button></div>
+      <div class="list">${today.slice(0,6).map(taskRow).join('')||empty('На сегодня всё разобрано')}</div>
+    </section>
+    <section class="card home-overdue-card">
+      <div class="section-title"><div><p class="eyebrow">Не потерять</p><h2>Просрочено <span class="home-count">${overdue.length}</span></h2></div>${overdue.length?'<button class="btn ghost small" data-dashboard-filter="overdue">Показать все</button>':''}</div>
+      <div class="list">${overdue.slice(0,5).map(taskRow).join('')||empty('Просроченных задач нет')}</div>
+    </section>
+  </div>
+  <div class="home-secondary-grid">
+    <section class="card home-next-card">
+      <div class="section-title"><div><p class="eyebrow">По времени</p><h2>Ближайшее</h2></div><button class="btn ghost small" data-route-meetings>Совещания</button></div>
+      ${nextMeeting?`<div class="home-meeting"><strong>${esc(nextMeeting.title)}</strong><span>${fmt(nextMeeting.date)} ${esc(nextMeeting.time||'')}</span>${nextMeeting.projectIds?.length?`<small>${nextMeeting.projectIds.map(id=>project(id)?.name).filter(Boolean).map(esc).join(' · ')}</small>`:''}</div>`:empty('Ближайших совещаний нет')}
+      ${futureMeetings.length>1?`<p class="home-note">Ещё запланировано: ${futureMeetings.length-1}</p>`:''}
+    </section>
+    <section class="card home-projects-card">
+      <div class="section-title"><div><p class="eyebrow">Продолжить</p><h2>Активные проекты</h2></div></div>
+      <div class="home-project-list">${activeProjects.map(x=>`<div class="home-project-row"><div><strong>${esc(x.project.name)}</strong><span>${x.open} открытых задач</span></div><div class="home-project-progress"><span>${x.progress}%</span>${bar(x.progress)}</div></div>`).join('')||empty('Нет проектов с открытыми задачами')}</div>
+    </section>
+  </div>
+  ${q?`<section class="card home-quote"><div><p class="eyebrow">Мысль дня</p><blockquote>“${esc(q.text)}”</blockquote><span>${esc(q.author||'Автор не указан')}</span></div><button class="btn ghost small" data-route-quotes>Все цитаты</button></section>`:''}`
+}
 
 function calendarTaskCard(t,view='calendar'){
   const linked=t.linkedSourceType?`<span class="chip">${esc(linkedTaskSourceLabel(t))}</span>`:'';
