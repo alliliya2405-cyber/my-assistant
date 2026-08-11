@@ -9,9 +9,12 @@
   const tokens=s=>norm(s).split(/\s+/).filter(Boolean);
   const escRe=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
   const cleanTitle=value=>String(value||'')
+    .trim()
+    .replace(/^[—–:;,.-]+\s*/,'')
     .replace(/^(?:должен|должна|должны|нужно|необходимо|поручено|поручить)\s+/i,'')
     .replace(/^(?:ответственн(?:ый|ая|ые)|исполнитель)\s*:\s*/i,'')
     .trim()
+    .replace(/^[—–:;,.-]+\s*/,'')
     .replace(/^./,c=>c.toUpperCase());
 
   const splitSource=text=>String(text||'').split(/\n+/).flatMap(line=>{
