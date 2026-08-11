@@ -34,6 +34,15 @@
     return rows;
   }
 
+  function addMemberToScope(scope,data,id){
+    if(!scope)return null;
+    const member={id:id||(typeof uid==='function'?uid():`${Date.now()}-${Math.random()}`),name:data.name,role:data.role||'',department:data.department||'',contact:data.contact||'',note:data.note||''};
+    const team=scope.subproject?scope.subproject.team:scope.project.team;
+    if(!Array.isArray(team))return null;
+    team.push(member);
+    return member;
+  }
+
   function addMemberModal(){
     const scopes=allScopes();
     if(!scopes.length){if(typeof toast==='function')toast('Сначала создайте проект');return}
@@ -42,29 +51,36 @@
     root.querySelector('#teamAddForm').onsubmit=e=>{
       e.preventDefault();
       const fd=new FormData(e.currentTarget),scope=scopes.find(x=>x.key===fd.get('scope'));
-      if(!scope)return;
-      const member={id:typeof uid==='function'?uid():`${Date.now()}-${Math.random()}`,name:String(fd.get('name')||'').trim(),role:String(fd.get('role')||'').trim(),department:String(fd.get('department')||'').trim(),contact:String(fd.get('contact')||'').trim(),note:String(fd.get('note')||'').trim()};
-      if(!member.name)return;
-      const team=scope.subproject?scope.subproject.team:scope.project.team;
-      team.push(member);
-      if(typeof log==='function')log('team',`Добавлен участник: ${member.name}`,scope.project.id);
+      const data={name:String(fd.get('name')||'').trim(),role:String(fd.get('role')||'').trim(),department:String(fd.get('department')||'').trim(),contact:String(fd.get('contact')||'').trim(),note:String(fd.get('note')||'').trim()};
+      if(!scope||!data.name)return;
+      addMemberToScope(scope,data);
+      if(typeof log==='function')log('team',`Добавлен участник: ${data.name}`,scope.project.id);
       closeModal();save('Участник команды добавлен');
     };
   }
 
   function editMemberModal(person){
-    const refs=memberRefs(person);
-    if(!refs.length){if(typeof toast==='function')toast('Не удалось найти исходную карточку участника');return}
-    const base=refs[0].member;
-    root.innerHTML=`<div class="modal-backdrop"><div class="modal team-manage-modal" role="dialog" aria-modal="true"><div class="modal-header"><div><h2>Редактировать участника</h2><p class="muted">Общие данные меняются во всех связанных карточках. Роль задаётся отдельно для каждого проекта.</p></div><button class="icon-btn" type="button" data-team-close>×</button></div><form id="teamEditForm"><div class="modal-scroll-area"><div class="form-grid"><div class="field full"><label>Имя участника</label><input name="name" required value="${esc(person.name)}"></div><div class="field"><label>Подразделение</label><input name="department" value="${esc(person.department||base.department||'')}"></div><div class="field"><label>Контакты</label><input name="contact" value="${esc(person.contact||base.contact||'')}"></div></div><section class="team-project-roles"><h3>Роли по проектам</h3>${refs.map((r,i)=>`<div class="team-project-role-row"><div><b>${esc(r.project.name)}</b><small>${r.subproject?`Подпроект: ${esc(r.subproject.name)}`:'Проект'}</small></div><input name="role-${i}" value="${esc(r.member.role||'')}" placeholder="Роль в проекте"></div>`).join('')}</section></div><div class="modal-footer"><button class="btn ghost" type="button" data-team-close>Отмена</button><button class="btn primary" type="submit">Сохранить</button></div></form></div></div>`;
+    const refs=memberRefs(person),scopes=allScopes();
+    if(!scopes.length){if(typeof toast==='function')toast('Сначала создайте проект');return}
+    const base=refs[0]?.member||{};
+    const linked=new Set(refs.map(r=>r.scope));
+    const available=scopes.filter(s=>!linked.has(s.key));
+    const fallbackNote=!refs.length?'<div class="team-unlinked-note"><b>Участник пока не привязан к проекту.</b><span>Выберите проект ниже и укажите роль — после сохранения появится полноценная проектная карточка.</span></div>':'';
+    root.innerHTML=`<div class="modal-backdrop"><div class="modal team-manage-modal" role="dialog" aria-modal="true"><div class="modal-header"><div><h2>Редактировать участника</h2><p class="muted">Общие данные меняются во всех связанных карточках. Роль задаётся отдельно для каждого проекта.</p></div><button class="icon-btn" type="button" data-team-close>×</button></div><form id="teamEditForm"><div class="modal-scroll-area"><div class="form-grid"><div class="field full"><label>Имя участника</label><input name="name" required value="${esc(person.name)}"></div><div class="field"><label>Подразделение</label><input name="department" value="${esc(person.department||base.department||'')}"></div><div class="field"><label>Контакты</label><input name="contact" value="${esc(person.contact||base.contact||'')}"></div></div>${fallbackNote}<section class="team-project-roles"><h3>Роли по проектам</h3>${refs.map((r,i)=>`<div class="team-project-role-row"><div><b>${esc(r.project.name)}</b><small>${r.subproject?`Подпроект: ${esc(r.subproject.name)}`:'Проект'}</small></div><input name="role-${i}" value="${esc(r.member.role||'')}" placeholder="Роль в проекте"></div>`).join('')||'<p class="muted">Проектных ролей пока нет.</p>'}</section>${available.length?`<section class="team-add-link"><h3>${refs.length?'Добавить ещё одну привязку':'Привязать к проекту'}</h3><div class="form-grid"><div class="field"><label>Проект / подпроект</label><select name="newScope"><option value="">Не добавлять</option>${available.map(x=>`<option value="${esc(x.key)}">${esc(x.label)}</option>`).join('')}</select></div><div class="field"><label>Роль</label><input name="newRole" placeholder="Роль в выбранном проекте"></div></div></section>`:''}</div><div class="modal-footer"><button class="btn ghost" type="button" data-team-close>Отмена</button><button class="btn primary" type="submit">Сохранить</button></div></form></div></div>`;
     root.querySelectorAll('[data-team-close]').forEach(x=>x.onclick=closeModal);
     root.querySelector('#teamEditForm').onsubmit=e=>{
       e.preventDefault();
       const fd=new FormData(e.currentTarget),name=String(fd.get('name')||'').trim(),department=String(fd.get('department')||'').trim(),contact=String(fd.get('contact')||'').trim();
       if(!name)return;
       refs.forEach((r,i)=>{r.member.name=name;r.member.department=department;r.member.contact=contact;r.member.role=String(fd.get(`role-${i}`)||'').trim()});
-      if(typeof log==='function')log('team',`Изменён участник: ${name}`,refs[0].project.id);
-      closeModal();save('Карточка участника обновлена');
+      const newScopeKey=String(fd.get('newScope')||'');
+      const newScope=scopes.find(x=>x.key===newScopeKey);
+      if(newScope){
+        const existingId=[...(person.memberIds instanceof Set?person.memberIds:new Set(person.memberIds||[]))][0]||base.id||null;
+        addMemberToScope(newScope,{name,department,contact,role:String(fd.get('newRole')||'').trim()},existingId);
+      }
+      if(typeof log==='function')log('team',`Изменён участник: ${name}`,refs[0]?.project?.id||newScope?.project?.id||'');
+      closeModal();save(refs.length?'Карточка участника обновлена':'Участник привязан к проекту');
     };
   }
 
