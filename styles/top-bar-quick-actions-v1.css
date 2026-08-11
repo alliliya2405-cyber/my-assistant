@@ -1,0 +1,87 @@
+/* Top Bar & Quick Actions v1
+   Visual-only layer. No data or application logic changes. */
+
+.topbar{
+  min-height:78px;
+  padding:14px 28px;
+  gap:20px;
+  background:rgba(245,247,251,.94);
+  backdrop-filter:blur(18px);
+  box-shadow:0 1px 0 rgba(148,163,184,.08);
+}
+.topbar>div:not(.top-actions){min-width:0}
+.topbar h1{
+  margin:2px 0 0;
+  font-size:25px;
+  line-height:1.15;
+  letter-spacing:-.025em;
+}
+.topbar .eyebrow{
+  font-size:11px;
+  letter-spacing:.11em;
+  color:#7c8799;
+}
+.top-actions{
+  margin-left:auto;
+  gap:10px;
+  flex:0 0 auto;
+}
+.save-status{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.72);
+  border:1px solid rgba(226,232,240,.9);
+  color:#778195;
+  font-size:12px;
+  line-height:1;
+}
+.save-status::before{
+  content:'✓';
+  width:17px;
+  height:17px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:#ecfdf5;
+  color:#15803d;
+  font-size:11px;
+  font-weight:800;
+}
+.save-status.error::before{
+  content:'!';
+  background:#fef2f2;
+  color:#b91c1c;
+}
+#quickAddBtn{
+  min-height:42px;
+  padding:9px 15px;
+  border-radius:12px;
+  box-shadow:0 7px 16px rgba(109,93,252,.20);
+  white-space:nowrap;
+}
+#quickAddBtn:hover{transform:translateY(-1px)}
+#quickAddBtn:active{transform:translateY(0)}
+
+/* Page-local creation remains available, but the global action should not
+   visually overpower the page's own primary control. */
+.content>.toolbar:first-child .btn.primary,
+.task-workspace>.toolbar:first-child .btn.primary{
+  box-shadow:none;
+}
+
+@media(max-width:900px){
+  .topbar{min-height:68px;padding:12px 16px;gap:12px}
+  .topbar h1{font-size:22px}
+  .save-status{display:none}
+  #quickAddBtn{min-height:40px;padding:8px 12px}
+}
+@media(max-width:520px){
+  .topbar{align-items:center}
+  .topbar .eyebrow{display:none}
+  .topbar h1{font-size:20px;margin:0}
+  #quickAddBtn{font-size:0;width:42px;padding:0;display:grid;place-items:center}
+  #quickAddBtn::after{content:'+';font-size:23px;line-height:1;font-weight:500}
+}
