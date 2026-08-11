@@ -1,0 +1,143 @@
+name: Apply Task Card Unified v1
+
+on:
+  push:
+    branches: [task-card-unified-v1]
+    paths: [.github/workflows/apply-task-card-unified-v1.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: task-card-unified-v1
+          fetch-depth: 0
+      - name: Apply and validate
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'styles.css?v=20' index.html
+          ! grep -q 'Task Card Unified v1' styles.css
+          cat >> styles.css <<'CSS'
+
+/* Task Card Unified v1 */
+.task-workspace .list-row.collapsible-entry:not(.global-collapsed){
+  display:grid!important;
+  grid-template-columns:30px minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:10px!important;
+  padding:10px 12px!important;
+  max-height:none!important;
+  overflow:visible!important;
+}
+.task-workspace .list-row.collapsible-entry:not(.global-collapsed)>.global-collapse-bar{
+  grid-column:1!important;
+  grid-row:1!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-width:0!important;
+  width:30px!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.task-workspace .list-row.collapsible-entry:not(.global-collapsed)>.global-collapse-bar .entry-collapse-title,
+.task-workspace .list-row.collapsible-entry:not(.global-collapsed)>.global-collapse-bar .entry-collapse-hint{display:none!important}
+.task-workspace .list-row.collapsible-entry:not(.global-collapsed)>.global-collapse-bar .entry-collapse-toggle{
+  width:28px!important;
+  height:28px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:9px!important;
+  background:#eef2ff!important;
+  color:var(--primary)!important;
+  box-shadow:none!important;
+  display:grid!important;
+  place-items:center!important;
+  cursor:pointer!important;
+}
+.task-workspace .list-row.collapsible-entry:not(.global-collapsed)>.global-collapse-bar+div{
+  grid-column:2!important;
+  min-width:0!important;
+}
+.task-workspace .list-row.collapsible-entry:not(.global-collapsed)>.actions{
+  grid-column:3!important;
+  align-self:center!important;
+}
+.task-workspace .list-row.collapsible-entry.global-collapsed{
+  display:block!important;
+  padding:8px 12px!important;
+  max-height:none!important;
+  overflow:visible!important;
+}
+.task-workspace .list-row.collapsible-entry.global-collapsed>.global-collapse-bar{
+  display:grid!important;
+  grid-template-columns:30px minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:10px!important;
+  width:100%!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.task-workspace .list-row.collapsible-entry.global-collapsed>.global-collapse-bar .entry-collapse-toggle{
+  width:28px!important;
+  height:28px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:9px!important;
+  background:#eef2ff!important;
+  color:var(--primary)!important;
+  display:grid!important;
+  place-items:center!important;
+}
+.task-workspace .list-row.collapsible-entry.global-collapsed>.global-collapse-bar .entry-collapse-title{
+  display:block!important;
+  min-width:0!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  font-size:14px!important;
+  font-weight:750!important;
+  color:var(--text)!important;
+}
+.task-workspace .list-row.collapsible-entry.global-collapsed>.global-collapse-bar .entry-collapse-hint{
+  display:block!important;
+  font-size:12px!important;
+  color:var(--muted)!important;
+  white-space:nowrap!important;
+}
+@media(max-width:680px){
+  .task-workspace .list-row.collapsible-entry:not(.global-collapsed){grid-template-columns:28px minmax(0,1fr)!important;align-items:start!important}
+  .task-workspace .list-row.collapsible-entry:not(.global-collapsed)>.actions{grid-column:2!important;width:100%!important;justify-content:flex-start!important}
+  .task-workspace .list-row.collapsible-entry.global-collapsed>.global-collapse-bar{grid-template-columns:28px minmax(0,1fr)!important}
+  .task-workspace .list-row.collapsible-entry.global-collapsed>.global-collapse-bar .entry-collapse-hint{display:none!important}
+}
+CSS
+          sed -i 's/styles.css?v=20/styles.css?v=21/' index.html
+          node --check app.js
+          node --check core/storage/data-store.js
+          node --check core/models/task.js
+          git diff --check
+          grep -q 'Task Card Unified v1' styles.css
+          grep -q 'styles.css?v=21' index.html
+          test -z "$(git diff --name-only -- app.js core/storage/data-store.js core/models/task.js)"
+          changed="$(git diff --name-only | sort)"
+          expected="$(printf '%s\n' index.html styles.css | sort)"
+          test "$changed" = "$expected"
+          rm .github/workflows/apply-task-card-unified-v1.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add styles.css index.html .github/workflows/apply-task-card-unified-v1.yml
+          git diff --cached --check
+          git commit -m 'Unify task card collapse layout'
+          git push origin HEAD:task-card-unified-v1
