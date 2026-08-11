@@ -1,0 +1,110 @@
+name: Apply UX navigation v1
+
+on:
+  push:
+    branches:
+      - application-ux-structure-v1
+    paths:
+      - .github/workflows/apply-ux-nav-v1.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: application-ux-structure-v1
+          fetch-depth: 0
+
+      - name: Patch navigation only
+        shell: python
+        run: |
+          from pathlib import Path
+
+          app = Path('app.js')
+          text = app.read_text(encoding='utf-8')
+          old = """const NAV=[
+['Сегодня',[['dashboard','Панель'],['day','День'],['week','Неделя'],['month','Месяц']]],
+['Работа',[['projects','Проекты'],['tasks','Задачи и Kanban'],['team','Команда'],['resources','Ресурсная карта'],['meetings','Совещания'],['reports','Отчёты'],['calendar','Обмен календарём']]],
+['Жизнь',[['health','Здоровье'],['family','Семья'],['education','Образование'],['leisure','Досуг']]],
+['Знания',[['quotes','Цитаты дня'],['notes','Заметки'],['library','Библиотека'],['reflection','Рефлексия'],['board','Доска']]],
+['Система',[['search','Поиск'],['history','Хронология'],['templates','Шаблоны и настройки']]]];
+const titles=Object.fromEntries(NAV.flatMap(g=>g[1]));
+function buildNav(){$('#nav').innerHTML=NAV.map(([g,items])=>`<div class=\"nav-group\">${g}</div>${items.map(([id,n])=>`<button data-route=\"${id}\" class=\"${route===id?'active':''}\">${n}</button>`).join('')}`).join('');$$('[data-route]').forEach(b=>b.onclick=()=>{route=b.dataset.route;sessionStorage.setItem('myAssistant.route',route);document.body.classList.remove('menu-open');render()})}
+"""
+          new = """const NAV=[
+['home','Главная',[['dashboard','Главная']]],
+['planning','Планирование',[['day','Сегодня'],['week','Неделя'],['month','Месяц'],['tasks','Задачи и Kanban']]],
+['projects','Проекты',[['projects','Проекты'],['meetings','Совещания'],['team','Команда'],['resources','Ресурсная карта'],['reports','Отчёты']]],
+['life','Жизнь',[['health','Здоровье'],['family','Семья'],['education','Образование'],['leisure','Досуг']]],
+['knowledge','Знания',[['notes','Заметки'],['library','Библиотека'],['reflection','Рефлексия'],['board','Доска'],['quotes','Цитаты дня']]]];
+const SERVICE_NAV=[['search','Поиск'],['history','Хронология'],['templates','Настройки'],['calendar','Обмен календарём']];
+const titles=Object.fromEntries([...NAV.flatMap(g=>g[2]),...SERVICE_NAV]);
+function buildNav(){
+  const currentGroup=NAV.find(([, ,items])=>items.some(([id])=>id===route))?.[0]||'';
+  const stored=sessionStorage.getItem('myAssistant.navGroup')||'';
+  const openGroup=currentGroup||stored||'planning';
+  const main=NAV.map(([key,label,items])=>{
+    if(key==='home')return `<button data-route=\"dashboard\" class=\"nav-home ${route==='dashboard'?'active':''}\">${label}</button>`;
+    const open=key===openGroup;
+    return `<div class=\"nav-section ${open?'open':''}\" data-nav-section=\"${key}\"><button class=\"nav-section-toggle\" type=\"button\" data-nav-toggle=\"${key}\" aria-expanded=\"${open}\"><span>${label}</span><span class=\"nav-chevron\">›</span></button><div class=\"nav-items\">${items.map(([id,n])=>`<button data-route=\"${id}\" class=\"${route===id?'active':''}\">${n}</button>`).join('')}</div></div>`
+  }).join('');
+  const service=`<div class=\"nav-service\"><button data-route=\"search\" class=\"${route==='search'?'active':''}\">Поиск</button><button data-nav-more type=\"button\" aria-expanded=\"${SERVICE_NAV.some(([id])=>id===route)}\">Ещё</button><div class=\"nav-service-items ${SERVICE_NAV.some(([id])=>id===route)?'open':''}\">${SERVICE_NAV.filter(([id])=>id!=='search').map(([id,n])=>`<button data-route=\"${id}\" class=\"${route===id?'active':''}\">${n}</button>`).join('')}</div></div>`;
+  $('#nav').innerHTML=main+service;
+  $$('[data-route]').forEach(b=>b.onclick=()=>{route=b.dataset.route;const group=NAV.find(([, ,items])=>items.some(([id])=>id===route))?.[0];if(group)sessionStorage.setItem('myAssistant.navGroup',group);sessionStorage.setItem('myAssistant.route',route);document.body.classList.remove('menu-open');render()});
+  $$('[data-nav-toggle]').forEach(b=>b.onclick=()=>{const key=b.dataset.navToggle,section=b.closest('.nav-section'),next=!section.classList.contains('open');$$('.nav-section').forEach(x=>x.classList.remove('open'));if(next){section.classList.add('open');sessionStorage.setItem('myAssistant.navGroup',key)}b.setAttribute('aria-expanded',String(next))});
+  const more=$('[data-nav-more]');if(more)more.onclick=()=>{const items=$('.nav-service-items'),next=!items.classList.contains('open');items.classList.toggle('open',next);more.setAttribute('aria-expanded',String(next))}
+}
+"""
+          if text.count(old) != 1:
+              raise SystemExit(f'Expected exactly one NAV/buildNav block, found {text.count(old)}')
+          app.write_text(text.replace(old,new,1),encoding='utf-8')
+
+          styles = Path('styles.css')
+          css = styles.read_text(encoding='utf-8')
+          marker='/* Application UX navigation v1 */'
+          if marker in css:
+              raise SystemExit('UX navigation CSS already exists')
+          css += """
+
+/* Application UX navigation v1 */
+.nav-home{font-weight:750}.nav-section{display:grid;gap:3px}.nav-section-toggle{display:flex!important;align-items:center;justify-content:space-between;width:100%;font-weight:700;color:#e5e7eb!important}.nav-chevron{font-size:20px;line-height:1;transition:transform .18s ease}.nav-section.open .nav-chevron{transform:rotate(90deg)}.nav-items{display:none;padding-left:8px}.nav-section.open .nav-items{display:grid;gap:3px}.nav-items button{padding-left:18px;font-size:14px}.nav-service{margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);display:grid;gap:3px}.nav-service>button{font-weight:700}.nav-service-items{display:none;padding-left:8px}.nav-service-items.open{display:grid;gap:3px}.nav-service-items button{padding-left:18px;font-size:14px}
+"""
+          styles.write_text(css,encoding='utf-8')
+
+          index = Path('index.html')
+          html = index.read_text(encoding='utf-8')
+          if html.count('styles.css?v=16') != 1 or html.count('app.js?v=18') != 1:
+              raise SystemExit('Unexpected cache-busting versions; refusing to patch')
+          html = html.replace('styles.css?v=16','styles.css?v=17',1).replace('app.js?v=18','app.js?v=19',1)
+          index.write_text(html,encoding='utf-8')
+
+      - name: Validate syntax and intended scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check app.js
+          git diff --check
+          changed="$(git diff --name-only | sort)"
+          expected="$(printf '%s\n' app.js index.html styles.css | sort)"
+          test "$changed" = "$expected"
+          grep -F "const SERVICE_NAV=" app.js
+          grep -F "data-nav-toggle" app.js
+          grep -F "/* Application UX navigation v1 */" styles.css
+          grep -F 'styles.css?v=17' index.html
+          grep -F 'app.js?v=19' index.html
+
+      - name: Commit patch and remove temporary workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm .github/workflows/apply-ux-nav-v1.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app.js styles.css index.html .github/workflows/apply-ux-nav-v1.yml
+          git diff --cached --check
+          git commit -m "Implement application UX navigation v1"
+          git push origin HEAD:application-ux-structure-v1
