@@ -1,0 +1,59 @@
+/* Reflection Cards v1
+   Visual hierarchy only. No data or business-logic changes. */
+
+.reflection-view .card {
+  padding: 22px;
+  min-width: 0;
+  overflow: visible;
+}
+
+.reflection-view .card > .toolbar,
+.reflection-view .card .toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  margin-bottom: 14px;
+}
+
+.reflection-view .card .toolbar h3,
+.reflection-view .card h3 {
+  margin: 0;
+  line-height: 1.3;
+}
+
+.reflection-view .card .actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.reflection-view .card p,
+.reflection-view .card .item-meta,
+.reflection-view .card div {
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+.reflection-view .card p {
+  line-height: 1.55;
+}
+
+.reflection-view .card strong,
+.reflection-view .card b {
+  font-weight: 700;
+}
+
+.reflection-view .card p:last-of-type {
+  margin-top: 18px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(109, 93, 252, 0.06);
+}
+
+@media (max-width: 760px) {
+  .reflection-view .card {
+    padding: 16px;
+  }
+}
