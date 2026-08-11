@@ -61,7 +61,7 @@
     const pt=tokens(personName),surname=pt[0]||'';
     if(surname){
       const stem=surname.length>=5?surname.slice(0,Math.max(5,surname.length-2)):surname;
-      const rx=new RegExp(`(?:^|\\s|[—–,:-])${escRe(stem)}[а-яa-z-]*(?:\\s+[а-я]\\.?\\s*[а-я]\\.?)?`,'i');
+      const rx=new RegExp(`(?:^|\\s|[—–,:-])${escRe(stem)}[а-яa-z-]*(?:\\s+[а-я]\\.\\s*[а-я]\\.?)?`,'i');
       value=value.replace(rx,' ');
     }
     value=value
