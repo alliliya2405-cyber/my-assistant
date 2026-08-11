@@ -1,0 +1,87 @@
+/* Planning / Today density v1
+   Visual-only layer. No data, routes or task logic changes. */
+
+.day-schedule{
+  padding:0;
+  overflow:hidden;
+}
+.day-hour-row{
+  min-height:58px;
+  display:grid;
+  grid-template-columns:72px minmax(0,1fr) auto;
+  align-items:center;
+  gap:12px;
+  padding:10px 14px;
+  border-bottom:1px solid rgba(226,232,240,.9);
+  transition:background .15s ease,min-height .15s ease;
+}
+.day-hour-row:last-child{border-bottom:0}
+.day-time-label{
+  color:#7b8495;
+  font-size:13px;
+  font-weight:700;
+  font-variant-numeric:tabular-nums;
+}
+.day-task-area{min-width:0}
+
+/* Empty hours stay visible and actionable, but stop taking the same vertical
+   space as hours that contain real tasks. */
+.day-hour-row:has(.day-empty){
+  min-height:42px;
+  padding-top:5px;
+  padding-bottom:5px;
+  background:rgba(248,250,252,.56);
+}
+.day-hour-row:has(.day-empty) .day-empty{
+  color:#a0a8b7;
+  font-size:12px;
+}
+.day-hour-row:has(.day-empty) > .btn{
+  opacity:.42;
+  padding:6px 9px;
+  font-size:12px;
+  box-shadow:none;
+}
+.day-hour-row:has(.day-empty):hover{
+  background:#fff;
+}
+.day-hour-row:has(.day-empty):hover > .btn,
+.day-hour-row:has(.day-empty) > .btn:focus-visible{
+  opacity:1;
+}
+
+/* Occupied hours keep a stronger work rhythm. */
+.day-hour-row:not(:has(.day-empty)){
+  min-height:76px;
+  background:#fff;
+}
+.day-hour-row:not(:has(.day-empty)) .day-time-label{
+  color:#4f46e5;
+}
+
+.day-navigation{
+  align-items:center;
+  gap:10px;
+  margin-bottom:14px;
+}
+.day-navigation h2{
+  margin:2px 0 0;
+  font-size:22px;
+  letter-spacing:-.02em;
+}
+.day-navigation input[type="date"]{
+  min-height:40px;
+}
+
+@media(max-width:760px){
+  .day-hour-row{
+    grid-template-columns:54px minmax(0,1fr) auto;
+    gap:7px;
+    padding:8px 10px;
+  }
+  .day-hour-row:has(.day-empty) > .btn{
+    opacity:.68;
+    padding:5px 7px;
+    font-size:11px;
+  }
+}
