@@ -1,0 +1,20 @@
+/* Project Scroll Fix v1
+   Expanded projects should use page scrolling, not nested vertical scrolling. */
+
+.project-card .project-details.project-scroll-area,
+.project-card .project-details.universal-scroll-area,
+.project-card .project-details{
+  max-height:none!important;
+  height:auto!important;
+  overflow:visible!important;
+  scrollbar-gutter:auto!important;
+}
+
+.project-card.expanded{overflow:visible}
+
+/* Keep horizontal overflow available only where a child component needs it. */
+.project-card .schedule-wrap,
+.project-card .kanban,
+.project-card .roadmap-scroll{
+  overflow:auto;
+}
