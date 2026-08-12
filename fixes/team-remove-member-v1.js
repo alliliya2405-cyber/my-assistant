@@ -13,6 +13,17 @@
   const close=()=>{root.innerHTML=''};
   const save=msg=>{if(typeof persist==='function')persist(msg);else if(typeof render==='function')render()};
 
+  function settings(){
+    const s=stateRef();if(!s)return{};
+    if(!s.settings)s.settings={};
+    if(!Array.isArray(s.settings.archivedTeamMembers))s.settings.archivedTeamMembers=[];
+    return s.settings;
+  }
+  function archivedSet(){return new Set(settings().archivedTeamMembers||[])}
+  function isArchived(person){return archivedSet().has(norm(person?.name))}
+  function archive(person){const k=norm(person?.name);if(!k)return;const st=settings();if(!st.archivedTeamMembers.includes(k))st.archivedTeamMembers.push(k)}
+  function unarchive(person){const k=norm(person?.name),st=settings();st.archivedTeamMembers=st.archivedTeamMembers.filter(x=>x!==k)}
+
   function refsFor(person){
     const ids=person?.memberIds instanceof Set?person.memberIds:new Set(Array.isArray(person?.memberIds)?person.memberIds:[]);
     const nameKey=norm(person?.name),rows=[];
@@ -23,10 +34,7 @@
     return rows;
   }
 
-  function removeRef(ref){
-    const i=ref.team.indexOf(ref.member);
-    if(i>=0)ref.team.splice(i,1);
-  }
+  function removeRef(ref){const i=ref.team.indexOf(ref.member);if(i>=0)ref.team.splice(i,1)}
 
   function openManage(person){
     const refs=refsFor(person);
@@ -36,30 +44,54 @@
     root.querySelectorAll('[data-unlink-index]').forEach(btn=>btn.onclick=()=>{
       const ref=refs[Number(btn.dataset.unlinkIndex)];if(!ref)return;
       if(!confirm(`Убрать ${person.name} из «${ref.label}»?\n\nПоручения и история останутся сохранены.`))return;
-      removeRef(ref);
+      removeRef(ref);unarchive(person);
       if(typeof log==='function')log('team',`Участник ${person.name} удалён из ${ref.label}`,ref.project.id);
       close();save('Участник удалён из проекта');
     });
     const all=root.querySelector('[data-unlink-all]');
     if(all)all.onclick=()=>{
       if(!confirm(`Убрать ${person.name} из всех проектов?\n\nПоручения, совещания и история не удаляются.`))return;
-      refs.forEach(removeRef);
+      refs.forEach(removeRef);archive(person);
       if(typeof log==='function')log('team',`Участник ${person.name} удалён из всех проектов`,'');
       close();save('Проектные привязки участника удалены');
     };
   }
 
+  function deletePerson(person){
+    const refs=refsFor(person);
+    const projects=refs.length?`\n\nБудут сняты привязки к проектам: ${refs.map(r=>r.label).join(', ')}.`:'';
+    if(!confirm(`Удалить ${person.name} из активной команды?${projects}\n\nПоручения, протоколы совещаний и история останутся сохранены.`))return;
+    refs.forEach(removeRef);
+    archive(person);
+    if(typeof log==='function')log('team',`Участник ${person.name} удалён из активной команды`,'');
+    save('Участник удалён из активной команды');
+  }
+
+  function personCards(person){
+    return [...content.querySelectorAll('article.card,.team-person-card')].filter(card=>{
+      const h=card.querySelector('h2,h3');return h&&h.textContent.trim()===person.name;
+    });
+  }
+
   function enhance(){
     if(title.textContent.trim()!=='Команда')return;
     registry().forEach(person=>{
-      const refs=refsFor(person);if(!refs.length)return;
-      [...content.querySelectorAll('article.card,.card')].forEach(card=>{
-        const h=card.querySelector('h2,h3');if(!h||h.textContent.trim()!==person.name)return;
-        if(card.querySelector('[data-team-manage-membership]'))return;
-        const btn=document.createElement('button');
-        btn.type='button';btn.className='btn ghost small';btn.dataset.teamManageMembership=person.name;btn.textContent='Участие в проектах';btn.onclick=()=>openManage(person);
+      const refs=refsFor(person);
+      if(refs.length&&isArchived(person))unarchive(person);
+      personCards(person).forEach(card=>{
+        if(isArchived(person)&&!refs.length){card.hidden=true;return}
+        card.hidden=false;
         const edit=card.querySelector('[data-team-edit-card]');
-        if(edit)edit.insertAdjacentElement('afterend',btn);else (card.querySelector('header,.toolbar')||card).appendChild(btn);
+        const host=edit?.parentElement||(card.querySelector('header,.toolbar')||card);
+        if(refs.length&&!card.querySelector('[data-team-manage-membership]')){
+          const manage=document.createElement('button');manage.type='button';manage.className='btn ghost small';manage.dataset.teamManageMembership=person.name;manage.textContent='Участие в проектах';manage.onclick=()=>openManage(person);
+          if(edit)edit.insertAdjacentElement('afterend',manage);else host.appendChild(manage);
+        }
+        if(!card.querySelector('[data-team-delete-person]')){
+          const del=document.createElement('button');del.type='button';del.className='btn danger small';del.dataset.teamDeletePerson=person.name;del.textContent='Удалить участника';del.onclick=()=>deletePerson(person);
+          const manage=card.querySelector('[data-team-manage-membership]');
+          if(manage)manage.insertAdjacentElement('afterend',del);else if(edit)edit.insertAdjacentElement('afterend',del);else host.appendChild(del);
+        }
       });
     });
   }
