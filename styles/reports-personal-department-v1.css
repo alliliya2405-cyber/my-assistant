@@ -1,0 +1,17 @@
+body.route-reports .personal-report-workflow{margin-bottom:18px;padding:22px}
+body.route-reports .report-flow-head{margin-bottom:18px}
+body.route-reports .report-flow-head h2{margin:4px 0 8px}
+body.route-reports .report-flow-head p{margin:0;color:#667085}
+body.route-reports .personal-report-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+body.route-reports .personal-report-grid article{border:1px solid #e4e7ec;border-radius:16px;padding:16px;background:#fafbff;min-width:0}
+body.route-reports .personal-report-grid h3{margin:0 0 12px}
+body.route-reports .personal-report-grid small{display:block;margin-top:10px;color:#7b8495}
+body.route-reports .report-flow-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+body.route-reports .report-flow-actions .btn{justify-content:center;white-space:normal;text-align:center}
+body.route-reports .department-integrate{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-top:16px;padding:16px;border-radius:16px;background:#f4f1ff;border:1px solid #ddd6fe}
+body.route-reports .department-integrate h3{margin:0 0 4px}
+body.route-reports .department-integrate p{margin:0;color:#667085}
+body.route-reports .report-doc-origin{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;font-size:13px;color:#667085}
+body.route-reports .report-doc-origin b{color:#23283a}
+@media(max-width:1100px){body.route-reports .personal-report-grid{grid-template-columns:1fr}body.route-reports .department-integrate{align-items:flex-start;flex-direction:column}}
+@media(max-width:680px){body.route-reports .report-flow-actions{grid-template-columns:1fr}body.route-reports .department-integrate .actions{display:grid;width:100%}}
