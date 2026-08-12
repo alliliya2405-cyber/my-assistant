@@ -73,6 +73,18 @@
     });
   }
 
+  function actionGroup(card){
+    let group=card.querySelector('.team-card-actions');
+    if(!group){
+      const header=card.querySelector('header,.toolbar')||card;
+      group=document.createElement('div');group.className='team-card-actions';
+      header.appendChild(group);
+      const edit=card.querySelector('[data-team-edit-card]');
+      if(edit)group.appendChild(edit);
+    }
+    return group;
+  }
+
   function enhance(){
     if(title.textContent.trim()!=='Команда')return;
     registry().forEach(person=>{
@@ -81,16 +93,16 @@
       personCards(person).forEach(card=>{
         if(isArchived(person)&&!refs.length){card.hidden=true;return}
         card.hidden=false;
+        const group=actionGroup(card);
         const edit=card.querySelector('[data-team-edit-card]');
-        const host=edit?.parentElement||(card.querySelector('header,.toolbar')||card);
+        if(edit&&edit.parentElement!==group)group.prepend(edit);
         if(refs.length&&!card.querySelector('[data-team-manage-membership]')){
           const manage=document.createElement('button');manage.type='button';manage.className='btn ghost small';manage.dataset.teamManageMembership=person.name;manage.textContent='Участие в проектах';manage.onclick=()=>openManage(person);
-          if(edit)edit.insertAdjacentElement('afterend',manage);else host.appendChild(manage);
+          group.appendChild(manage);
         }
         if(!card.querySelector('[data-team-delete-person]')){
           const del=document.createElement('button');del.type='button';del.className='btn danger small';del.dataset.teamDeletePerson=person.name;del.textContent='Удалить участника';del.onclick=()=>deletePerson(person);
-          const manage=card.querySelector('[data-team-manage-membership]');
-          if(manage)manage.insertAdjacentElement('afterend',del);else if(edit)edit.insertAdjacentElement('afterend',del);else host.appendChild(del);
+          group.appendChild(del);
         }
       });
     });
