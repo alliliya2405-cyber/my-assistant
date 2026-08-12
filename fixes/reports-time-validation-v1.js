@@ -38,13 +38,16 @@
       const head=card.querySelector('.report-card-header');
       if(!head)return;
       const state=reportPercentState(card);
+      const ok=!state.invalid&&Math.abs(state.total-100)<0.001;
+      const signature=`${state.total}|${state.invalid}|${state.filled}|${state.rows}|${ok}`;
       let box=card.querySelector(':scope > .report-time-validation');
       if(!box){
         box=document.createElement('div');
         box.className='report-time-validation';
         head.after(box);
       }
-      const ok=!state.invalid&&Math.abs(state.total-100)<0.001;
+      if(box.dataset.validationSignature===signature)return;
+      box.dataset.validationSignature=signature;
       box.classList.toggle('is-valid',ok);
       box.classList.toggle('is-error',!ok);
       if(state.invalid){
@@ -53,8 +56,7 @@
         box.innerHTML='<strong>Время: 100%</strong><span>Распределение времени заполнено корректно.</span>';
       }else{
         const delta=Math.round(Math.abs(100-state.total)*100)/100;
-        const direction=state.total<100?'не хватает':'превышение';
-        box.innerHTML=`<strong>Ошибка: всего ${state.total}% вместо 100%</strong><span>${direction==='не хватает'?'Не хватает':'Лишних'} ${delta}%. Исправьте значения в колонке «Время».</span>`;
+        box.innerHTML=`<strong>Ошибка: всего ${state.total}% вместо 100%</strong><span>${state.total<100?'Не хватает':'Лишних'} ${delta}%. Исправьте значения в колонке «Время».</span>`;
       }
       card.dataset.reportTimeValid=ok?'true':'false';
     });
@@ -90,7 +92,8 @@
       const invalid=!parsed.valid;
       field.classList.toggle('report-time-field-error',invalid);
       input.setAttribute('aria-invalid',String(invalid));
-      hint.textContent=invalid?'Ошибка: укажите число от 0 до 100, например 15%.':'Укажите долю рабочего времени от 0 до 100%.';
+      const next=invalid?'Ошибка: укажите число от 0 до 100, например 15%.':'Укажите долю рабочего времени от 0 до 100%.';
+      if(hint.textContent!==next)hint.textContent=next;
       return !invalid;
     };
     input.addEventListener('input',validate);
@@ -104,7 +107,6 @@
         event.preventDefault();
         event.stopImmediatePropagation();
         input.focus();
-        if(typeof window.toast==='function')window.toast('Проверьте процент времени');
       },true);
     }
   }
