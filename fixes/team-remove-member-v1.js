@@ -6,7 +6,7 @@
   const root=document.getElementById('modalRoot');
   if(!title||!content||!root)return;
 
-  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const norm=v=>String(v||'').trim().toLowerCase().replace(/ё/g,'е').replace(/[^\p{L}\p{N}]+/gu,' ').trim();
   const stateRef=()=>typeof state!=='undefined'?state:null;
   const registry=()=>typeof teamRegistry==='function'?teamRegistry():[];
