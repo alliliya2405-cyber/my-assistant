@@ -1,0 +1,13 @@
+body.route-reports .report-list-controls{margin:18px 0 12px;align-items:center}
+body.route-reports .report-card{overflow:hidden}
+body.route-reports .report-card-header{align-items:flex-start;gap:16px}
+body.route-reports .report-card-header>div:first-child{min-width:0;flex:1}
+body.route-reports .report-card-header h2{margin:6px 0 4px;line-height:1.25}
+body.route-reports .report-actions{justify-content:flex-end;flex-wrap:wrap}
+body.route-reports .report-card-toggle{min-width:92px}
+body.route-reports .report-workflow-counts{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+body.route-reports .report-workflow-counts span{display:inline-flex;padding:5px 9px;border-radius:999px;background:#f1f3f9;color:#667085;font-size:12px}
+body.route-reports .report-collapsed{padding-bottom:18px}
+body.route-reports .report-collapsed .report-card-header{margin-bottom:0}
+body.route-reports .report-source-list{align-items:center;gap:8px;flex-wrap:wrap}
+@media(max-width:900px){body.route-reports .report-card-header{display:grid}body.route-reports .report-actions{justify-content:flex-start}}
