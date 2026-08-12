@@ -1,0 +1,7 @@
+body.route-reports .report-table-wrap{max-height:none!important;height:auto!important;overflow-x:auto!important;overflow-y:visible!important;scrollbar-gutter:auto!important}
+body.route-reports .report-table{min-width:980px;width:100%;border-collapse:collapse}
+body.route-reports .report-table thead th{position:sticky;top:0;z-index:2;background:#f7f8fb}
+body.route-reports .report-employee{overflow:visible}
+body.route-reports .report-card:not(.report-collapsed){overflow:visible}
+body.route-reports .report-row-actions{white-space:nowrap}
+body.route-reports .report-table td,body.route-reports .report-table th{vertical-align:top}
