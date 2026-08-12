@@ -84,6 +84,12 @@
     };
   }
 
+  function actionGroup(card,header){
+    let group=card.querySelector('.team-card-actions');
+    if(!group){group=document.createElement('div');group.className='team-card-actions';header.appendChild(group)}
+    return group;
+  }
+
   function enhance(){
     if(title.textContent.trim()!=='Команда')return;
     if(!content.querySelector('[data-team-add-global]')){
@@ -98,10 +104,13 @@
         const h=card.querySelector('h2,h3');return h&&h.textContent.trim()===person.name;
       });
       cards.forEach(card=>{
-        if(card.querySelector('[data-team-edit-card]'))return;
-        const btn=document.createElement('button');btn.type='button';btn.className='btn ghost small team-edit-card-btn';btn.dataset.teamEditCard=person.name;btn.textContent='Редактировать карточку';btn.onclick=()=>editMemberModal(person);
         const header=card.querySelector('header,.toolbar')||card;
-        header.appendChild(btn);
+        const group=actionGroup(card,header);
+        let btn=card.querySelector('[data-team-edit-card]');
+        if(!btn){
+          btn=document.createElement('button');btn.type='button';btn.className='btn ghost small team-edit-card-btn';btn.dataset.teamEditCard=person.name;btn.textContent='Редактировать карточку';btn.onclick=()=>editMemberModal(person);
+        }
+        if(btn.parentElement!==group)group.appendChild(btn);
       });
     });
   }
