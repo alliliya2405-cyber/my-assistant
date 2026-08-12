@@ -4,7 +4,8 @@
   const PEOPLE=['Абдуллина Л.Э.','Исса О.Ф.','Королева С.И.'];
   const titleEl=document.getElementById('pageTitle');
   const content=document.getElementById('content');
-  if(!titleEl||!content)return;
+  const modalRoot=document.getElementById('modalRoot');
+  if(!titleEl||!content||!modalRoot)return;
 
   const escHtml=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const typeLabel=t=>t==='plan'?'План':'Отчёт';
@@ -17,9 +18,7 @@
   function normalizeLegacy(){
     (state.reports||[]).forEach(doc=>{
       if(doc.scope)return;
-      doc.scope='department';
-      doc.owner='Дошкольный отдел';
-      doc.source=doc.source||'legacy';
+      doc.scope='department';doc.owner='Дошкольный отдел';doc.source=doc.source||'legacy';
     });
   }
 
@@ -32,17 +31,35 @@
     state.reports.unshift(doc);persist(`Создан персональный ${type==='plan'?'план':'отчёт'}: ${owner}`);render();
     return doc;
   }
-
   function createManual(owner,type){
     const doc=createPersonal(owner,type,'manual');
     if(!doc)return;
     setTimeout(()=>{if(typeof openReportRow==='function')openReportRow(doc)},0);
   }
-
+  function lockCollectContext(owner,period){
+    const modal=modalRoot.querySelector('.modal');
+    if(!modal||modal.querySelector('.modal-header h2')?.textContent.trim()!=='Собрать единый документ')return;
+    const employee=modal.querySelector('[name="employee"]');
+    if(employee){
+      employee.value=owner;
+      if(!modal.querySelector('input[data-locked-employee]')){
+        const hidden=document.createElement('input');hidden.type='hidden';hidden.name='employee';hidden.value=owner;hidden.dataset.lockedEmployee='1';employee.after(hidden);
+      }
+      employee.disabled=true;employee.title='Автоматическая сборка доступна только для Абдуллиной Л.Э.';
+    }
+    const periodInput=modal.querySelector('[name="period"]');
+    if(periodInput){periodInput.value=period;periodInput.readOnly=true;periodInput.title='Период задан при создании персонального документа';}
+    [...modal.querySelectorAll('.field')].forEach(field=>{if(field.textContent.includes('Рефлексия'))field.querySelectorAll('label').forEach(label=>{if(label.textContent.includes('Рефлексия'))label.style.display='none'})});
+  }
   function createAuto(owner,type){
     const doc=createPersonal(owner,type,'auto');
     if(!doc)return;
-    setTimeout(()=>{if(typeof collectReportData==='function')collectReportData(doc)},0);
+    setTimeout(()=>{
+      if(typeof collectReportData==='function'){
+        collectReportData(doc);
+        setTimeout(()=>lockCollectContext(owner,doc.period),0);
+      }
+    },0);
   }
 
   function splitCsvLine(line,delimiter){
@@ -84,7 +101,7 @@
     }).filter(r=>r.project||r.activity||r.plan||r.result||r.time);
   }
   function parseJson(text,owner){
-    const parsed=JSON.parse(text);const rows=Array.isArray(parsed)?parsed:parsed.rows;
+    const parsed=JSON.parse(text),rows=Array.isArray(parsed)?parsed:parsed.rows;
     if(!Array.isArray(rows))throw new Error('JSON должен содержать массив строк или поле rows');
     return rows.map(r=>({id:newId(),employee:owner,project:String(r.project||r['Проект']||''),activity:String(r.activity||r['Вид деятельности']||''),plan:String(r.plan||r['План']||''),result:String(r.result||r['Результат']||''),time:String(r.time||r['Время']||'')}));
   }
@@ -95,8 +112,7 @@
         const text=String(reader.result||'');
         const rows=file.name.toLowerCase().endsWith('.json')?parseJson(text,owner):parseCsv(text,owner);
         if(!rows.length)throw new Error('В файле нет строк документа');
-        const suggested=new Date().toISOString().slice(0,7);
-        const period=prompt(`Период загружаемого документа «${typeLabel(type)} — ${owner}»`,suggested);
+        const period=prompt(`Период загружаемого документа «${typeLabel(type)} — ${owner}»`,new Date().toISOString().slice(0,7));
         if(period===null)return;
         const clean=String(period).trim();if(!clean)throw new Error('Период обязателен');
         const doc={id:newId(),type,scope:'personal',owner,source:'import',importFileName:file.name,title:defaultTitle(type,owner,clean),department:'Дошкольный отдел',period:clean,rows,createdAt:now(),updatedAt:now()};
@@ -122,14 +138,25 @@
       (doc.rows||[]).forEach(r=>rows.push({id:newId(),employee:owner,project:r.project||'',activity:r.activity||'',plan:r.plan||'',result:type==='report'?(r.result||''):'',time:r.time||'',sourceReportId:doc.id}));
     });
     let target=(state.reports||[]).find(d=>d.scope==='department'&&d.type===type&&String(d.period||'').trim()===clean);
-    if(target){target.rows=rows;target.title=departmentTitle(type,clean);target.owner='Дошкольный отдел';target.source='integrated';target.sourceReportIds=docs.map(d=>d.id);target.updatedAt=now();}
-    else{target={id:newId(),type,scope:'department',owner:'Дошкольный отдел',source:'integrated',sourceReportIds:docs.map(d=>d.id),title:departmentTitle(type,clean),department:'Дошкольный отдел',period:clean,rows,createdAt:now(),updatedAt:now()};state.reports.unshift(target);}
+    if(target){
+      target.rows=rows;target.title=departmentTitle(type,clean);target.owner='Дошкольный отдел';target.source='integrated';target.sourceReportIds=docs.map(d=>d.id);target.updatedAt=now();
+    }else{
+      target={id:newId(),type,scope:'department',owner:'Дошкольный отдел',source:'integrated',sourceReportIds:docs.map(d=>d.id),title:departmentTitle(type,clean),department:'Дошкольный отдел',period:clean,rows,createdAt:now(),updatedAt:now()};state.reports.unshift(target);
+    }
     persist(`Собран сводный ${type==='plan'?'план':'отчёт'} дошкольного отдела`);render();
   }
 
   function docId(card,index){
     const btn=card.querySelector('[data-edit-report],[data-add-report-row],[data-collect-report],[data-export-report],[data-delete-report]');
     return btn?.dataset.editReport||btn?.dataset.addReportRow||btn?.dataset.collectReport||btn?.dataset.exportReport||btn?.dataset.deleteReport||state.reports?.[index]?.id||'';
+  }
+  function enforceArchitecture(command){
+    if(command){
+      command.querySelector('h3')&&(command.querySelector('h3').textContent='Выгрузка текущего документа');
+      command.querySelectorAll('[data-create-report-template],[data-collect-current-report]').forEach(el=>el.hidden=true);
+      command.querySelector('.report-source-list')?.setAttribute('hidden','');
+    }
+    content.querySelectorAll('[data-add-report]').forEach(el=>el.hidden=true);
   }
   function decorateCards(){
     const cards=[...content.querySelectorAll('.reports-list .report-card')];
@@ -140,7 +167,9 @@
       let meta=head.querySelector('.report-doc-origin');
       if(!meta){meta=document.createElement('div');meta.className='report-doc-origin';head.append(meta);}
       if(doc.scope==='personal')meta.innerHTML=`<span class="chip">Персональный</span><b>${escHtml(doc.owner)}</b><span>${doc.source==='import'?'Загружен из файла':doc.source==='auto'?'Автосборка':'Ручное заполнение'}</span>`;
-      else meta.innerHTML='<span class="chip">Сводный</span><b>Дошкольный отдел</b><span>Интеграция персональных документов</span>';
+      else meta.innerHTML=`<span class="chip">Сводный</span><b>Дошкольный отдел</b><span>${doc.source==='integrated'?'Интеграция трёх персональных документов':'Существующий документ'}</span>`;
+      const collect=card.querySelector('[data-collect-report]');
+      if(collect)collect.hidden=!(doc.scope==='personal'&&doc.owner==='Абдуллина Л.Э.');
     });
   }
 
@@ -148,6 +177,7 @@
     if(titleEl.textContent.trim()!=='Отчёты')return;
     normalizeLegacy();
     const command=content.querySelector('.report-command-center');
+    enforceArchitecture(command);
     if(command&&!content.querySelector('.personal-report-workflow')){
       const section=document.createElement('section');section.className='card personal-report-workflow';
       section.innerHTML=`<div class="report-flow-head"><div><p class="eyebrow">Персональные документы → сводный документ</p><h2>Отчёты и планы сотрудников</h2><p>Абдуллина заполняет документ вручную или собирает из приложения. Исса и Королева загружают готовые документы. Сводный документ отдела формируется из трёх персональных.</p></div></div><div class="personal-report-grid"><article><h3>Абдуллина Л.Э.</h3><div class="report-flow-actions"><button class="btn ghost" data-personal-manual="report">Отчёт вручную</button><button class="btn ghost" data-personal-manual="plan">План вручную</button><button class="btn primary" data-personal-auto="report">Собрать отчёт</button><button class="btn primary" data-personal-auto="plan">Собрать план</button></div></article><article><h3>Исса О.Ф.</h3><div class="report-flow-actions"><label class="btn ghost file-btn">Загрузить отчёт<input hidden type="file" accept=".csv,.json,text/csv,application/json" data-personal-import="report" data-owner="Исса О.Ф."></label><label class="btn ghost file-btn">Загрузить план<input hidden type="file" accept=".csv,.json,text/csv,application/json" data-personal-import="plan" data-owner="Исса О.Ф."></label></div><small>CSV или JSON</small></article><article><h3>Королева С.И.</h3><div class="report-flow-actions"><label class="btn ghost file-btn">Загрузить отчёт<input hidden type="file" accept=".csv,.json,text/csv,application/json" data-personal-import="report" data-owner="Королева С.И."></label><label class="btn ghost file-btn">Загрузить план<input hidden type="file" accept=".csv,.json,text/csv,application/json" data-personal-import="plan" data-owner="Королева С.И."></label></div><small>CSV или JSON</small></article></div><div class="department-integrate"><div><h3>Дошкольный отдел</h3><p>Собирается только из персональных документов Абдуллиной, Иссы и Королевой за один период.</p></div><div class="actions"><button class="btn primary" data-integrate-department="report">Собрать отчёт отдела</button><button class="btn primary" data-integrate-department="plan">Собрать план отдела</button></div></div>`;
