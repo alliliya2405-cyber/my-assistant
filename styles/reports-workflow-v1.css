@@ -10,4 +10,12 @@ body.route-reports .report-workflow-counts span{display:inline-flex;padding:5px 
 body.route-reports .report-collapsed{padding-bottom:18px}
 body.route-reports .report-collapsed .report-card-header{margin-bottom:0}
 body.route-reports .report-source-list{align-items:center;gap:8px;flex-wrap:wrap}
-@media(max-width:900px){body.route-reports .report-card-header{display:grid}body.route-reports .report-actions{justify-content:flex-start}}
+body.route-reports .report-employee{overflow:visible!important}
+body.route-reports .report-employee .report-table-wrap,
+body.route-reports .report-employee .table-wrap,
+body.route-reports .report-employee .report-table-container{max-height:none!important;height:auto!important;overflow-y:visible!important;overflow-x:auto!important}
+body.route-reports .report-table{width:100%;min-width:980px}
+body.route-reports .report-table th{white-space:nowrap}
+body.route-reports .report-table td{vertical-align:top;line-height:1.45}
+body.route-reports .report-card:not(.report-collapsed) .report-employee{margin-bottom:18px}
+@media(max-width:900px){body.route-reports .report-card-header{display:grid}body.route-reports .report-actions{justify-content:flex-start}body.route-reports .report-table{min-width:860px}}
