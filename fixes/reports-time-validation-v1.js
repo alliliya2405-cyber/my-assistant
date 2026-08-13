@@ -30,12 +30,14 @@
     const rawName=section.querySelector('h3')?.textContent.trim()||`Сотрудник ${index+1}`;
     const employee=rawName.replace(/^\d+\.\s*/, '');
     total=Math.round(total*100)/100;
-    return {employee,total,invalid,filled,rows:cells.length,ok:!invalid&&Math.abs(total-100)<0.001};
+    const rows=cells.length;
+    return {employee,total,invalid,filled,rows,empty:rows===0,ok:rows>0&&!invalid&&Math.abs(total-100)<0.001};
   }
   function reportPercentState(card){
     const sections=[...card.querySelectorAll('.report-employee')];
     const groups=sections.length?sections.map(sectionPercentState):[sectionPercentState(card,0)];
-    return {groups,ok:groups.length>0&&groups.every(g=>g.ok),invalid:groups.reduce((n,g)=>n+g.invalid,0)};
+    const empty=groups.every(g=>g.empty);
+    return {groups,empty,ok:!empty&&groups.every(g=>g.ok),invalid:groups.reduce((n,g)=>n+g.invalid,0)};
   }
 
   function decorateReports(){
@@ -45,23 +47,26 @@
       const head=card.querySelector('.report-card-header');
       if(!head)return;
       const state=reportPercentState(card);
-      const signature=state.groups.map(g=>`${g.employee}:${g.total}:${g.invalid}:${g.filled}:${g.rows}:${g.ok}`).join('|');
+      const signature=`${state.empty}|`+state.groups.map(g=>`${g.employee}:${g.total}:${g.invalid}:${g.filled}:${g.rows}:${g.empty}:${g.ok}`).join('|');
       let box=card.querySelector(':scope > .report-time-validation');
       if(!box){box=document.createElement('div');box.className='report-time-validation';head.after(box);}
       if(box.dataset.validationSignature===signature)return;
       box.dataset.validationSignature=signature;
       box.classList.toggle('is-valid',state.ok);
-      box.classList.toggle('is-error',!state.ok);
-      if(state.invalid){
+      box.classList.toggle('is-error',!state.empty&&!state.ok);
+      box.classList.toggle('is-pending',state.empty);
+      if(state.empty){
+        box.innerHTML='<strong>Документ пока не заполнен</strong><span>Проверка 100% начнётся после добавления первой строки.</span>';
+      }else if(state.invalid){
         const bad=state.groups.filter(g=>g.invalid).map(g=>g.employee).join(', ');
         box.innerHTML=`<strong>Ошибка во времени</strong><span>Некорректный процент у: ${bad}. Используйте число от 0 до 100.</span>`;
       }else if(state.ok){
         box.innerHTML=`<strong>Время распределено корректно</strong><span>${state.groups.length===1?'Итого 100%.':`У каждого из ${state.groups.length} сотрудников — 100%.`}</span>`;
       }else{
-        const bad=state.groups.filter(g=>!g.ok);
+        const bad=state.groups.filter(g=>!g.empty&&!g.ok);
         box.innerHTML=`<strong>Ошибка распределения времени</strong><span>${bad.map(g=>`${g.employee}: ${g.total}% (${g.total<100?`не хватает ${Math.round((100-g.total)*100)/100}%`:`лишних ${Math.round((g.total-100)*100)/100}%`})`).join(' · ')}</span>`;
       }
-      card.dataset.reportTimeValid=state.ok?'true':'false';
+      card.dataset.reportTimeValid=state.empty?'pending':(state.ok?'true':'false');
     });
   }
 
