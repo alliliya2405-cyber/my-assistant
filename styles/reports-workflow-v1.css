@@ -1,21 +1,38 @@
 body.route-reports .report-list-controls{margin:18px 0 12px;align-items:center}
 body.route-reports .report-card{overflow:hidden}
-body.route-reports .report-card-header{align-items:flex-start;gap:16px}
+body.route-reports .report-card-header{align-items:flex-start;gap:16px;padding-bottom:12px;border-bottom:1px solid #eceef3}
 body.route-reports .report-card-header>div:first-child{min-width:0;flex:1}
-body.route-reports .report-card-header h2{margin:6px 0 4px;line-height:1.25}
-body.route-reports .report-actions{justify-content:flex-end;flex-wrap:wrap}
+body.route-reports .report-card-header h2{margin:6px 0 4px;line-height:1.25;font-size:20px}
+body.route-reports .report-actions{justify-content:flex-end;flex-wrap:wrap;gap:6px}
+body.route-reports .report-actions .btn{box-shadow:none}
+body.route-reports .report-actions .btn:not(.primary):not(.danger){background:#f4f6fa;border-color:#e7eaf0;color:#556070}
+body.route-reports .report-actions .btn.danger{background:#fff5f5;color:#b42318;border-color:#fee2e2}
 body.route-reports .report-card-toggle{min-width:92px}
 body.route-reports .report-workflow-counts{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 body.route-reports .report-workflow-counts span{display:inline-flex;padding:5px 9px;border-radius:999px;background:#f1f3f9;color:#667085;font-size:12px}
 body.route-reports .report-collapsed{padding-bottom:18px}
-body.route-reports .report-collapsed .report-card-header{margin-bottom:0}
+body.route-reports .report-collapsed .report-card-header{margin-bottom:0;border-bottom:0;padding-bottom:0}
 body.route-reports .report-source-list{align-items:center;gap:8px;flex-wrap:wrap}
-body.route-reports .report-employee{overflow:visible!important}
+body.route-reports .report-time-validation{margin-top:12px}
+body.route-reports .report-employee{overflow:visible!important;margin-top:14px;padding:14px 16px;border:1px solid #e6e9f0;border-radius:14px;background:#fff}
+body.route-reports .report-employee>h3,
+body.route-reports .report-employee>h2{margin:0 0 12px;font-size:17px;line-height:1.3;color:#202637}
+body.route-reports .report-employee+.report-employee{margin-top:12px}
 body.route-reports .report-employee .report-table-wrap,
 body.route-reports .report-employee .table-wrap,
-body.route-reports .report-employee .report-table-container{max-height:none!important;height:auto!important;overflow-y:visible!important;overflow-x:auto!important}
-body.route-reports .report-table{width:100%;min-width:980px}
-body.route-reports .report-table th{white-space:nowrap}
-body.route-reports .report-table td{vertical-align:top;line-height:1.45}
-body.route-reports .report-card:not(.report-collapsed) .report-employee{margin-bottom:18px}
-@media(max-width:900px){body.route-reports .report-card-header{display:grid}body.route-reports .report-actions{justify-content:flex-start}body.route-reports .report-table{min-width:860px}}
+body.route-reports .report-employee .report-table-container{max-height:none!important;height:auto!important;overflow-y:visible!important;overflow-x:auto!important;border-radius:10px}
+body.route-reports .report-table{width:100%;min-width:980px;border-collapse:separate;border-spacing:0}
+body.route-reports .report-table th{white-space:nowrap;background:#f7f8fb;color:#4b5565;font-size:12px;font-weight:700}
+body.route-reports .report-table td{vertical-align:top;line-height:1.45;color:#3d4655;background:#fff}
+body.route-reports .report-table th,
+body.route-reports .report-table td{padding:9px 10px;border-color:#e8ebf1}
+body.route-reports .report-table tr:hover td{background:#fbfcff}
+body.route-reports .report-table .btn,
+body.route-reports .report-employee .btn{box-shadow:none}
+body.route-reports .report-table .btn:not(.danger),
+body.route-reports .report-employee .btn:not(.danger){background:#f1f3f7;border-color:#e6e9ef;color:#596273}
+body.route-reports .report-table .btn.danger,
+body.route-reports .report-employee .btn.danger{background:#fff1f1;border-color:#fee2e2;color:#b42318}
+body.route-reports .report-card:not(.report-collapsed) .report-employee{margin-bottom:12px}
+body.route-reports .report-card:not(.report-collapsed)>.report-employee:last-child{margin-bottom:0}
+@media(max-width:900px){body.route-reports .report-card-header{display:grid}body.route-reports .report-actions{justify-content:flex-start}body.route-reports .report-table{min-width:860px}body.route-reports .report-employee{padding:12px}}
