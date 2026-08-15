@@ -18,7 +18,7 @@
 
   function sync() {
     if (!isMeetings()) return;
-    content.querySelectorAll(':scope > article.card.meeting-card > p').forEach(section => {
+    content.querySelectorAll(':scope > article.card > p').forEach(section => {
       section.classList.toggle('meeting-empty-section', isEmptySection(section));
     });
   }
