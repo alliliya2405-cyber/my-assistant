@@ -16,8 +16,10 @@
   }
 
   function purgeSkippedHealthTasks(){
+    const before=(state.tasks||[]).length;
     const skipped=new Map((state.health||[]).map(h=>[h.id,new Set(h.skippedDates||[])]));
     state.tasks=state.tasks.filter(task=>!(task.generatedByHealth&&task.healthHabitId&&skipped.get(task.healthHabitId)?.has(task.date)));
+    return state.tasks.length!==before;
   }
 
   if(typeof originalSyncHealthTasks==='function'){
@@ -27,7 +29,7 @@
       return result;
     };
   }
-  purgeSkippedHealthTasks();
+  if(purgeSkippedHealthTasks())persist();
 
   function deleteTask(task){
     if(!task||task.generatedLinked)return false;
@@ -39,9 +41,10 @@
     return true;
   }
 
-  function laterTasks(){
-    const today=typeof todayIso==='function'?todayIso():new Date().toISOString().slice(0,10);
-    return (state.tasks||[]).filter(task=>!task.done&&task.date&&task.date>today);
+  function visibleTasksInGroup(group){
+    const ids=[...group.querySelectorAll('[data-toggle-task]')].map(button=>button.dataset.toggleTask).filter(Boolean);
+    const seen=new Set();
+    return ids.map(id=>(state.tasks||[]).find(task=>task.id===id)).filter(task=>task&&!seen.has(task.id)&&(seen.add(task.id),true));
   }
 
   function decorate(){
@@ -67,10 +70,10 @@
       heading.classList.add('task-group-heading-actions');
       const button=document.createElement('button');button.type='button';button.className='btn danger small';button.dataset.deleteLaterTasks='1';button.textContent='Удалить всё';
       button.onclick=()=>{
-        const all=laterTasks(),deletable=all.filter(task=>!task.generatedLinked),linked=all.length-deletable.length;
+        const all=visibleTasksInGroup(group),deletable=all.filter(task=>!task.generatedLinked),linked=all.length-deletable.length;
         if(!deletable.length){notify(linked?'Связанные задачи удаляются через их источник':'В разделе «Позже» нет задач для удаления');return;}
         const suffix=linked?` Связанные задачи (${linked}) останутся и удаляются через поручение, совещание или спринт.`:'';
-        if(!confirm(`Удалить все задачи из раздела «Позже» (${deletable.length})?${suffix}`))return;
+        if(!confirm(`Удалить все показанные задачи из раздела «Позже» (${deletable.length})?${suffix}`))return;
         const ids=new Set(deletable.map(task=>task.id));
         deletable.forEach(rememberSkippedHealthTask);
         state.tasks=state.tasks.filter(task=>!ids.has(task.id));
