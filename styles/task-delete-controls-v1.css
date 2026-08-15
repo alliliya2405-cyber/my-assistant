@@ -1,0 +1,5 @@
+body.route-tasks .task-group-heading-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+body.route-tasks .task-group-heading-actions .chip{margin-right:auto}
+body.route-tasks .task-group-heading-actions [data-delete-later-tasks]{margin-left:auto}
+body.route-tasks .task-group .list-row>.actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media(max-width:680px){body.route-tasks .task-group-heading-actions [data-delete-later-tasks]{margin-left:0}body.route-tasks .task-group .list-row>.actions{justify-content:flex-start}}
