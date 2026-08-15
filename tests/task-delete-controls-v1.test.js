@@ -8,6 +8,7 @@ assert(js.includes("button.textContent='Удалить всё'"),'bulk delete bu
 assert(js.includes('task.generatedLinked'),'linked tasks must be protected from direct deletion');
 assert(js.includes('habit.skippedDates'),'generated health occurrences must remember skipped dates');
 assert(js.includes('purgeSkippedHealthTasks'),'skipped health occurrences must not reappear after regeneration');
-assert(js.includes("confirm(`Удалить все задачи из раздела «Позже»"),'bulk deletion must require confirmation');
+assert(js.includes('visibleTasksInGroup(group)'),'bulk delete must respect the tasks currently shown in the Later group');
+assert(js.includes("confirm(`Удалить все показанные задачи из раздела «Позже»"),'bulk deletion must require confirmation');
 assert(css.includes('[data-delete-later-tasks]'),'bulk delete layout rule is missing');
 console.log('task delete controls: ok');
