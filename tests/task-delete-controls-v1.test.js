@@ -1,0 +1,13 @@
+'use strict';
+const fs=require('fs');
+const assert=require('assert');
+const js=fs.readFileSync('fixes/task-delete-controls-v1.js','utf8');
+const css=fs.readFileSync('styles/task-delete-controls-v1.css','utf8');
+assert(js.includes("button.textContent='Удалить'"),'single delete button is missing');
+assert(js.includes("button.textContent='Удалить всё'"),'bulk delete button is missing');
+assert(js.includes('task.generatedLinked'),'linked tasks must be protected from direct deletion');
+assert(js.includes('habit.skippedDates'),'generated health occurrences must remember skipped dates');
+assert(js.includes('purgeSkippedHealthTasks'),'skipped health occurrences must not reappear after regeneration');
+assert(js.includes("confirm(`Удалить все задачи из раздела «Позже»"),'bulk deletion must require confirmation');
+assert(css.includes('[data-delete-later-tasks]'),'bulk delete layout rule is missing');
+console.log('task delete controls: ok');
