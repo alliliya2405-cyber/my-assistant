@@ -90,14 +90,38 @@
     return group;
   }
 
+  function mergePageActions(bar){
+    if(bar.dataset.teamActionsMerged==='1')return;
+    const candidates=[...content.children].filter(el=>el!==bar&&el.classList?.contains('toolbar'));
+    const source=candidates.find(el=>/поручени/i.test(el.textContent||''));
+    if(!source){bar.dataset.teamActionsMerged='1';return}
+
+    const left=document.createElement('div');left.className='team-manage-actions';
+    const notes=document.createElement('div');notes.className='team-manage-notes';
+
+    [...bar.children].forEach(node=>{
+      if(node.matches?.('button,.btn'))left.appendChild(node);else notes.appendChild(node);
+    });
+    [...source.children].forEach(node=>{
+      if(node.matches?.('button,.btn')||node.querySelector?.('button,.btn'))left.appendChild(node);else notes.appendChild(node);
+    });
+
+    bar.replaceChildren(left,notes);
+    source.remove();
+    bar.dataset.teamActionsMerged='1';
+  }
+
   function enhance(){
     if(title.textContent.trim()!=='Команда')return;
-    if(!content.querySelector('[data-team-add-global]')){
-      const bar=document.createElement('div');bar.className='team-manage-toolbar';bar.innerHTML='<button class="btn primary" type="button" data-team-add-global>+ Участник команды</button><span class="muted">Роли редактируются отдельно для каждого проекта.</span>';
+    let bar=content.querySelector('.team-manage-toolbar');
+    if(!bar){
+      bar=document.createElement('div');bar.className='team-manage-toolbar';bar.innerHTML='<button class="btn primary" type="button" data-team-add-global>+ Участник команды</button><span class="muted">Роли редактируются отдельно для каждого проекта.</span>';
       const hero=content.querySelector('.hero');
       if(hero)hero.insertAdjacentElement('afterend',bar);else content.prepend(bar);
       bar.querySelector('[data-team-add-global]').onclick=addMemberModal;
     }
+    mergePageActions(bar);
+
     const people=registry();
     people.forEach(person=>{
       const cards=[...content.querySelectorAll('article.card,.card')].filter(card=>{
