@@ -6,10 +6,36 @@ const title=document.getElementById('pageTitle'),content=document.getElementById
 if(!title||!content)return;
 const notify=m=>typeof toast==='function'?toast(m):alert(m);
 function pct(v){const m=String(v??'').trim().replace(',','.').match(/^(\d+(?:\.\d+)?)%?$/);return m?Number(m[1]):NaN}
-function validRows(doc){if(doc.type!=='report')return true;const sum=(doc.rows||[]).reduce((n,r)=>n+(Number.isFinite(pct(r.time))?pct(r.time):0),0);return (doc.rows||[]).length>0&&(doc.rows||[]).every(r=>Number.isFinite(pct(r.time))&&pct(r.time)>=0&&pct(r.time)<=100)&&Math.abs(sum-100)<.001}
+function reportRowsState(doc){
+  const rows=doc.rows||[];
+  if(doc.type!=='report'||!rows.length)return {pending:doc.type==='report'&&!rows.length,valid:true,total:0};
+  let total=0;
+  for(const row of rows){const n=pct(row.time);if(!Number.isFinite(n)||n<0||n>100)return {pending:false,valid:false,total};total+=n;}
+  total=Math.round(total*100)/100;
+  return {pending:false,valid:Math.abs(total-100)<.001,total};
+}
 function downloadTemplate(owner,type){const header='Проект;Вид деятельности;План (начало месяца);Результат (конец месяца);Время\n';const sample=type==='report'?'Название проекта;Вид деятельности;Что планировалось;Что получено;100%\n':'Название проекта;Вид деятельности;Что планируется;;100%\n';const blob=new Blob(['\uFEFF'+header+sample],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${type==='report'?'otchet':'plan'}-${owner.replace(/[^а-яa-z0-9]+/gi,'-')}-template.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
-function latest(owner,type,period){return (state.reports||[]).filter(d=>d.scope==='personal'&&d.owner===owner&&d.type===type&&String(d.period||'')===period).sort((a,b)=>String(b.updatedAt||'').localeCompare(String(a.updatedAt||'')))[0]}
-function audit(){const issues=[];(state.reports||[]).forEach(d=>{if(d.scope==='personal'&&!PEOPLE.includes(d.owner))issues.push(`Неизвестный владелец: ${d.title}`);if(d.scope==='personal'&&d.type==='report'&&!validRows(d))issues.push(`Время не равно 100%: ${d.owner}, ${d.period||'без периода'}`);if(d.scope==='department'&&d.source==='integrated'){const missing=PEOPLE.filter(p=>!latest(p,d.type,String(d.period||'')));if(missing.length)issues.push(`Сводный документ ${d.period}: нет ${missing.join(', ')}`)}});return issues}
-function decorate(){if(title.textContent.trim()!=='Отчёты')return;const flow=content.querySelector('.personal-report-workflow');if(flow&&!flow.querySelector('[data-report-audit]')){const bar=document.createElement('div');bar.className='department-integrate report-audit-bar';bar.innerHTML='<div><h3>Проверка раздела</h3><p>Проверяет владельцев документов, наличие персональных источников и 100% времени в отчётах.</p></div><button class="btn ghost" data-report-audit>Проверить настройки</button>';flow.append(bar);bar.querySelector('[data-report-audit]').onclick=()=>{const issues=audit();notify(issues.length?`Найдено ошибок: ${issues.length}. ${issues.slice(0,3).join(' · ')}`:'Проверка пройдена: ошибок в структуре документов не найдено')};flow.querySelectorAll('article').forEach(article=>{const owner=article.querySelector('h3')?.textContent.trim();if(!['Исса О.Ф.','Королева С.И.'].includes(owner))return;const small=article.querySelector('small');if(!small)return;small.innerHTML='CSV или JSON · <button type="button" class="link-button" data-template="report">Шаблон отчёта</button> · <button type="button" class="link-button" data-template="plan">Шаблон плана</button>';small.querySelectorAll('[data-template]').forEach(b=>b.onclick=()=>downloadTemplate(owner,b.dataset.template))})}}
+function latest(owner,type,period){return (state.reports||[]).filter(d=>d.scope==='personal'&&d.owner===owner&&d.type===type&&String(d.period||'').trim()===String(period||'').trim()).sort((a,b)=>String(b.updatedAt||b.createdAt||'').localeCompare(String(a.updatedAt||a.createdAt||'')))[0]||null}
+function audit(){
+  const issues=[];
+  (state.reports||[]).forEach(d=>{
+    if(d.scope==='personal'&&!PEOPLE.includes(d.owner))issues.push(`Неизвестный владелец: ${d.title}`);
+    if(d.scope==='personal'&&d.type==='report'){
+      const s=reportRowsState(d);
+      if(!s.pending&&!s.valid)issues.push(`Время не равно 100%: ${d.owner}, ${d.period||'без периода'} (${s.total}%)`);
+    }
+    if(d.scope==='department'&&d.source==='integrated'){
+      const period=String(d.period||'').trim(),docs=PEOPLE.map(p=>latest(p,d.type,period));
+      const missing=PEOPLE.filter((_,i)=>!docs[i]);
+      if(missing.length)issues.push(`Сводный документ ${d.period}: нет ${missing.join(', ')}`);
+      if(d.type==='report'){
+        const invalid=PEOPLE.filter((_,i)=>docs[i]&&!reportRowsState(docs[i]).valid);
+        if(invalid.length)issues.push(`Сводный отчёт ${d.period}: некорректное время у ${invalid.join(', ')}`);
+      }
+    }
+  });
+  return issues;
+}
+function decorate(){if(title.textContent.trim()!=='Отчёты')return;const flow=content.querySelector('.personal-report-workflow');if(flow&&!flow.querySelector('[data-report-audit]')){const bar=document.createElement('div');bar.className='department-integrate report-audit-bar';bar.innerHTML='<div><h3>Проверка раздела</h3><p>Проверяет владельцев документов, наличие персональных источников и 100% времени в заполненных отчётах.</p></div><button class="btn ghost" data-report-audit>Проверить настройки</button>';flow.append(bar);bar.querySelector('[data-report-audit]').onclick=()=>{const issues=audit();notify(issues.length?`Найдено ошибок: ${issues.length}. ${issues.slice(0,3).join(' · ')}`:'Проверка пройдена: ошибок в структуре документов не найдено')};flow.querySelectorAll('article').forEach(article=>{const owner=article.querySelector('h3')?.textContent.trim();if(!['Исса О.Ф.','Королева С.И.'].includes(owner))return;const small=article.querySelector('small');if(!small)return;small.innerHTML='CSV или JSON · <button type="button" class="link-button" data-template="report">Шаблон отчёта</button> · <button type="button" class="link-button" data-template="plan">Шаблон плана</button>';small.querySelectorAll('[data-template]').forEach(b=>b.onclick=()=>downloadTemplate(owner,b.dataset.template))})}}
 let q=false;const schedule=()=>{if(q)return;q=true;requestAnimationFrame(()=>{q=false;decorate()})};new MutationObserver(schedule).observe(content,{childList:true,subtree:true});new MutationObserver(schedule).observe(title,{childList:true,subtree:true,characterData:true});schedule();
 })();
