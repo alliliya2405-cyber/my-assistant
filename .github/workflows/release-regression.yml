@@ -1,0 +1,62 @@
+name: Release regression audit
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check app.js
+          node --check core/models/task.js
+          node --check core/storage/data-store.js
+          while IFS= read -r file; do
+            node --check "$file"
+          done < <(find fixes -maxdepth 1 -type f -name '*.js' | sort)
+
+      - name: Run regression tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          count=0
+          while IFS= read -r test; do
+            echo "==> $test"
+            node "$test"
+            count=$((count + 1))
+          done < <(find tests -maxdepth 1 -type f -name '*.test.js' | sort)
+          test "$count" -gt 0
+          echo "Passed $count regression test files"
+
+      - name: Verify local assets referenced by index.html
+        run: |
+          node <<'NODE'
+          const fs=require('fs');
+          const html=fs.readFileSync('index.html','utf8');
+          const refs=[...html.matchAll(/(?:href|src)="([^"]+)"/g)].map(m=>m[1]);
+          const missing=[];
+          for(const ref of refs){
+            if(/^(?:https?:|data:|#)/.test(ref)) continue;
+            const path=ref.split('?')[0].split('#')[0];
+            if(path && !fs.existsSync(path)) missing.push(path);
+          }
+          if(missing.length){
+            console.error('Missing local assets:', [...new Set(missing)].join(', '));
+            process.exit(1);
+          }
+          console.log(`Verified ${refs.length} index references`);
+          NODE
