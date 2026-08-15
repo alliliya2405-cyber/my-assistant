@@ -23,16 +23,18 @@
   font-size:22px;
 }
 .project-summary-main{min-width:0}
-.project-summary-main .chips{gap:5px;margin-bottom:3px}
+.project-summary-main .chips{gap:5px;margin-bottom:4px}
 .project-summary-main .chip{padding:3px 7px;font-size:11px}
 .project-summary-main h2{
-  margin:2px 0 5px;
+  margin:2px 0 6px;
   font-size:17px;
   line-height:1.25;
+  font-weight:700;
 }
 .project-compact-meta{
   gap:7px;
   font-size:12px;
+  color:var(--muted);
 }
 .project-compact-meta span{padding-right:7px}
 
@@ -60,6 +62,18 @@
 }
 .project-card:hover .drag-handle{opacity:.7}
 
+/* All Projects scanability v1: keep the project identity visually anchored
+   near the expand control instead of floating in the middle of wide cards. */
+.project-card.collapsed .project-summary-main{
+  max-width:720px;
+}
+.project-card.collapsed .project-summary{
+  column-gap:14px;
+}
+.project-card.collapsed .project-summary-actions{
+  margin-left:18px;
+}
+
 .project-card.expanded .project-summary{
   background:linear-gradient(180deg,rgba(248,250,252,.9),rgba(255,255,255,.98));
 }
@@ -67,6 +81,11 @@
 .project-goal{margin:14px 0 10px}
 .project-meta{margin:9px 0 11px;gap:9px;font-size:12px}
 .project-inner-controls{margin-top:12px}
+
+@media(max-width:1100px){
+  .project-card.collapsed .project-summary-main{max-width:none}
+  .project-card.collapsed .project-summary-actions{margin-left:0}
+}
 
 @media(max-width:900px){
   .project-summary{grid-template-columns:32px minmax(0,1fr)}
