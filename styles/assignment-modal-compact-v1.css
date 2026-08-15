@@ -1,22 +1,39 @@
 /* Assignment Modal Compact v1
    Visual-only refinement for the generic assignment modal. */
 
+.assignment-modal-compact{
+  max-height:min(92vh,820px);
+}
 .assignment-modal-compact .modal-scroll-area{
-  padding-bottom:10px;
+  padding:14px 22px 8px;
 }
 .assignment-modal-compact .form-grid{
-  gap:12px 14px;
+  gap:10px 14px;
 }
-.assignment-modal-compact .field textarea{
-  min-height:96px;
-  height:96px;
+.assignment-modal-compact .field{
+  gap:4px;
+}
+.assignment-modal-compact .field textarea,
+.assignment-modal-compact #modalForm textarea[name="brief"],
+.assignment-modal-compact #modalForm textarea[name="criteria"]{
+  min-height:72px!important;
+  height:72px!important;
+  max-height:180px;
   resize:vertical;
+  padding-top:10px;
+  padding-bottom:10px;
 }
 .assignment-modal-compact .field label{
-  margin-bottom:5px;
+  margin-bottom:0;
+}
+.assignment-modal-compact .field input,
+.assignment-modal-compact .field select{
+  min-height:44px;
+  padding-top:10px;
+  padding-bottom:10px;
 }
 .assignment-modal-compact .modal-end-space{
-  display:none;
+  display:none!important;
 }
 .assignment-modal-compact .modal-footer{
   padding-top:10px;
@@ -24,18 +41,29 @@
 }
 
 @media(max-height:760px){
-  .assignment-modal-compact .field textarea{
-    min-height:78px;
-    height:78px;
+  .assignment-modal-compact .modal-scroll-area{
+    padding-top:10px;
+  }
+  .assignment-modal-compact .field textarea,
+  .assignment-modal-compact #modalForm textarea[name="brief"],
+  .assignment-modal-compact #modalForm textarea[name="criteria"]{
+    min-height:62px!important;
+    height:62px!important;
   }
   .assignment-modal-compact .form-grid{
-    gap:9px 12px;
+    gap:8px 12px;
   }
 }
 
 @media(max-width:760px){
-  .assignment-modal-compact .field textarea{
-    min-height:90px;
-    height:90px;
+  .assignment-modal-compact .modal-scroll-area{
+    padding-left:16px;
+    padding-right:16px;
+  }
+  .assignment-modal-compact .field textarea,
+  .assignment-modal-compact #modalForm textarea[name="brief"],
+  .assignment-modal-compact #modalForm textarea[name="criteria"]{
+    min-height:78px!important;
+    height:78px!important;
   }
 }
