@@ -1,16 +1,26 @@
 body.route-reports .personal-report-workflow{margin-bottom:18px;padding:22px}
-body.route-reports .report-flow-head{margin-bottom:18px}
+body.route-reports .report-flow-head{margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid #eceef5}
 body.route-reports .report-flow-head h2{margin:4px 0 8px}
-body.route-reports .report-flow-head p{margin:0;color:#667085}
-body.route-reports .personal-report-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-body.route-reports .personal-report-grid article{border:1px solid #e4e7ec;border-radius:16px;padding:16px;background:#fafbff;min-width:0}
-body.route-reports .personal-report-grid h3{margin:0 0 12px}
-body.route-reports .personal-report-grid small{display:block;margin-top:10px;color:#7b8495}
-body.route-reports .report-flow-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-body.route-reports .report-flow-actions .btn{justify-content:center;white-space:normal;text-align:center}
-body.route-reports .department-integrate{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-top:16px;padding:16px;border-radius:16px;background:#f4f1ff;border:1px solid #ddd6fe}
+body.route-reports .report-flow-head p{margin:0;color:#667085;max-width:920px}
+body.route-reports .personal-report-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;counter-reset:report-person}
+body.route-reports .personal-report-grid article{position:relative;border:1px solid #e4e7ec;border-radius:14px;padding:14px;background:#fafbff;min-width:0;counter-increment:report-person}
+body.route-reports .personal-report-grid article::before{content:"Шаг 1";display:inline-flex;margin-bottom:8px;padding:3px 7px;border-radius:999px;background:#f0edff;color:#6d5dfc;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+body.route-reports .personal-report-grid h3{margin:0 0 10px}
+body.route-reports .personal-report-grid small{display:block;margin-top:8px;color:#7b8495}
+body.route-reports .report-flow-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+body.route-reports .report-flow-actions .btn{justify-content:center;white-space:normal;text-align:center;min-height:36px}
+body.route-reports .report-flow-actions .btn.ghost{background:#f0f2f7;border-color:#e7eaf1;color:#4f596b;box-shadow:none}
+body.route-reports .report-flow-actions .btn.primary{box-shadow:none}
+body.route-reports .department-integrate{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-top:14px;padding:14px 16px;border-radius:14px;background:#f4f1ff;border:1px solid #ddd6fe}
+body.route-reports .department-integrate>div:first-child::before{content:"Шаг 2 · Сводный документ";display:block;margin-bottom:6px;color:#6d5dfc;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
 body.route-reports .department-integrate h3{margin:0 0 4px}
 body.route-reports .department-integrate p{margin:0;color:#667085}
+body.route-reports .department-integrate .actions{flex:0 0 auto}
+body.route-reports .personal-report-workflow .report-audit-box{margin-top:10px!important;padding:11px 14px!important;border-radius:12px!important;background:#fafbff!important;border-color:#e6e9f0!important}
+body.route-reports .personal-report-workflow .report-audit-box>div:first-child::before{content:"Проверка перед сборкой";display:block;margin-bottom:4px;color:#8a93a3;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+body.route-reports .personal-report-workflow .report-audit-box .btn{background:#f0f2f7;border-color:#e7eaf1;color:#4f596b;box-shadow:none}
+body.route-reports .report-command-center{position:relative}
+body.route-reports .report-command-center::before{content:"Шаг 3 · Готовый документ";display:block;margin-bottom:10px;color:#6d5dfc;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
 body.route-reports .report-doc-origin{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;font-size:13px;color:#667085}
 body.route-reports .report-doc-origin b{color:#23283a}
 @media(max-width:1100px){body.route-reports .personal-report-grid{grid-template-columns:1fr}body.route-reports .department-integrate{align-items:flex-start;flex-direction:column}}
