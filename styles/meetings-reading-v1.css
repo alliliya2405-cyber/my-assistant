@@ -1,0 +1,64 @@
+/* Meetings Reading v1
+   Improves scanability of expanded meeting cards without changing meeting data or logic. */
+
+body.route-meetings .meeting-card:not(.meeting-is-collapsed) > .toolbar{
+  align-items:flex-start;
+  gap:14px;
+}
+
+body.route-meetings .meeting-card:not(.meeting-is-collapsed) > .toolbar > :first-child{
+  flex:1 1 320px;
+  min-width:0;
+}
+
+body.route-meetings .meeting-card:not(.meeting-is-collapsed) > .toolbar .actions{
+  justify-content:flex-end;
+}
+
+body.route-meetings .meeting-card:not(.meeting-is-collapsed) > p{
+  margin:0 0 10px;
+  padding:12px 14px;
+  border:1px solid #eceef5;
+  border-radius:12px;
+  background:#fafbff;
+  line-height:1.55;
+}
+
+body.route-meetings .meeting-card:not(.meeting-is-collapsed) > p > b{
+  display:block;
+  margin-bottom:4px;
+  color:#374151;
+}
+
+body.route-meetings .meeting-card:not(.meeting-is-collapsed) > .meeting-actions-preview{
+  margin:10px 0;
+  padding:14px;
+  border:1px solid #e7e8f2;
+  border-radius:14px;
+  background:#f7f7fc;
+}
+
+body.route-meetings .meeting-card:not(.meeting-is-collapsed) > .meeting-actions-preview > b{
+  display:block;
+  margin-bottom:8px;
+  color:#374151;
+}
+
+body.route-meetings .meeting-card:not(.meeting-is-collapsed) .meeting-action-row{
+  margin-top:8px;
+  background:#fff;
+}
+
+@media(max-width:900px){
+  body.route-meetings .meeting-card:not(.meeting-is-collapsed) > .toolbar .actions{
+    width:100%;
+    justify-content:flex-start;
+  }
+}
+
+@media(max-width:620px){
+  body.route-meetings .meeting-card:not(.meeting-is-collapsed) > p,
+  body.route-meetings .meeting-card:not(.meeting-is-collapsed) > .meeting-actions-preview{
+    padding:12px;
+  }
+}
