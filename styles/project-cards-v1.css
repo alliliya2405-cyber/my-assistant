@@ -108,6 +108,41 @@
 .project-meta{margin:9px 0 11px;gap:9px;font-size:12px}
 .project-inner-controls{margin-top:12px}
 
+/* Expanded Project Hierarchy v1: the project-level information should read as
+   one compact header before the user enters the nested team/subproject/sprint tree. */
+.project-card.expanded .project-details{
+  border-top:1px solid rgba(148,163,184,.18);
+  padding-top:12px;
+}
+.project-card.expanded .project-goal{
+  max-width:900px;
+  margin:0 0 8px;
+  font-size:14px;
+  line-height:1.5;
+  color:#334155;
+}
+.project-card.expanded .project-meta{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:6px 12px;
+  margin:0 0 10px;
+  color:#64748b;
+  line-height:1.4;
+}
+.project-card.expanded .project-inner-controls{
+  display:flex;
+  justify-content:flex-end;
+  gap:6px;
+  margin:8px 0 12px;
+  padding-top:9px;
+  border-top:1px solid rgba(148,163,184,.16);
+}
+.project-card.expanded .project-details > .progress{
+  margin:8px 0 0;
+  height:7px;
+}
+
 @media(max-width:1100px){
   .project-card.collapsed .project-summary-main{max-width:none}
   .project-card.collapsed .project-summary-actions{margin-left:0}
@@ -122,6 +157,7 @@
     padding-left:0!important;
   }
   .project-summary-actions .drag-handle{order:99}
+  .project-card.expanded .project-inner-controls{justify-content:flex-start}
 }
 
 @media(max-width:560px){
