@@ -18,8 +18,9 @@ assert(js.includes("hero.querySelector('.education-global-collapse-controls')"),
 assert(css.includes('.education-category-collapsed > .education-category-body'),'collapsed state must be enforced by card class');
 assert(css.includes('display: none !important'),'collapsed body must remain hidden even if other education decorators run');
 assert(css.includes('.hero .education-global-collapse-controls'),'global controls need explicit visible hero styling');
-assert(css.includes('max-height: 640px'),'expanded categories must have bounded height');
-assert(css.includes('overflow-y: auto'),'expanded categories must scroll internally');
-assert(html.includes('styles/education-cards-v1.css?v=4'),'Education CSS cache bust is missing');
+assert(css.includes('.education-category-expanded > .education-category-body'),'expanded category body must own the scrolling region');
+assert(css.includes('height: clamp(320px, 43vh, 500px)'),'expanded categories must have bounded body height');
+assert(css.includes('overflow-y: scroll'),'every expanded category body must support internal scrolling');
+assert(html.includes('styles/education-cards-v1.css?v=5'),'Education CSS cache bust is missing');
 assert(html.includes('fixes/education-collapse-fix-v1.js?v=5'),'Education collapse JS cache bust is missing');
-console.log('education category collapse v5 stable: ok');
+console.log('education category collapse v5 + uniform scroll: ok');
