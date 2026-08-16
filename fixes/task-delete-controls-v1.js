@@ -7,6 +7,11 @@
 
   const notify=message=>typeof toast==='function'?toast(message):alert(message);
   const originalSyncHealthTasks=window.syncHealthTasks;
+  const BLOCKED_ROUTINE_TITLES=['ходьба','вода','капли в глаза'];
+  let areaFilter='all';
+
+  const normalize=value=>String(value||'').trim().toLowerCase().replace(/\s+/g,' ');
+  const isBlockedRoutineTask=task=>BLOCKED_ROUTINE_TITLES.some(name=>normalize(task?.title).includes(name));
 
   function rememberSkippedHealthTask(task){
     if(!task?.generatedByHealth||!task.healthHabitId||!task.date)return;
@@ -22,14 +27,28 @@
     return state.tasks.length!==before;
   }
 
+  function purgeBlockedRoutineTasks(){
+    const before=(state.tasks||[]).length;
+    state.settings=state.settings||{};
+    state.settings.blockedRoutineTaskTitles=[...BLOCKED_ROUTINE_TITLES];
+    state.tasks=(state.tasks||[]).filter(task=>!isBlockedRoutineTask(task));
+    return state.tasks.length!==before;
+  }
+
+  function purgeProtectedTasks(){
+    const a=purgeSkippedHealthTasks();
+    const b=purgeBlockedRoutineTasks();
+    return a||b;
+  }
+
   if(typeof originalSyncHealthTasks==='function'){
     window.syncHealthTasks=function(habit,...args){
       const result=originalSyncHealthTasks(habit,...args);
-      purgeSkippedHealthTasks();
+      purgeProtectedTasks();
       return result;
     };
   }
-  if(purgeSkippedHealthTasks())persist();
+  if(purgeProtectedTasks())persist('Удалены задачи: Ходьба, Вода, Капли в глаза');
 
   function deleteTask(task){
     if(!task||task.generatedLinked)return false;
@@ -47,21 +66,84 @@
     return ids.map(id=>(state.tasks||[]).find(task=>task.id===id)).filter(task=>task&&!seen.has(task.id)&&(seen.add(task.id),true));
   }
 
+  function taskMatchesArea(task){
+    if(areaFilter==='all')return true;
+    if(areaFilter==='projects')return Boolean(task?.projectId);
+    if(areaFilter==='health')return Boolean(task?.generatedByHealth||task?.healthHabitId||normalize(task?.sphere)==='health'||normalize(task?.sphere)==='здоровье');
+    if(areaFilter==='education'){
+      const sphere=normalize(task?.sphere);
+      const p=(state.projects||[]).find(item=>item.id===task?.projectId);
+      return sphere==='education'||sphere==='образование'||(p?.areas||[]).some(area=>normalize(area)==='образование');
+    }
+    return true;
+  }
+
+  function taskIdFromNode(node){
+    return node.querySelector('[data-toggle-task]')?.dataset.toggleTask||node.dataset.dragTask||'';
+  }
+
+  function applyAreaFilter(){
+    if(title.textContent.trim()!=='Задачи')return;
+    const workspace=content.querySelector('.task-workspace');
+    if(!workspace)return;
+    workspace.querySelectorAll('.task-group').forEach(group=>{
+      let visible=0;
+      group.querySelectorAll('.list-row').forEach(row=>{
+        const task=(state.tasks||[]).find(item=>item.id===taskIdFromNode(row));
+        const show=task&&taskMatchesArea(task);
+        row.hidden=!show;
+        if(show)visible++;
+      });
+      const chip=group.querySelector(':scope > h2 .chip');if(chip)chip.textContent=String(visible);
+      group.hidden=visible===0;
+    });
+    workspace.querySelectorAll('.kanban-col').forEach(col=>{
+      let visible=0;
+      col.querySelectorAll('.kanban-card').forEach(card=>{
+        const task=(state.tasks||[]).find(item=>item.id===taskIdFromNode(card));
+        const show=task&&taskMatchesArea(task);
+        card.hidden=!show;
+        if(show)visible++;
+      });
+      const chip=col.querySelector('.kanban-col-head .chip');if(chip)chip.textContent=String(visible);
+    });
+  }
+
+  function ensureAreaFilter(workspace){
+    const filters=workspace.querySelector('.task-filters');
+    if(!filters||filters.querySelector('#taskAreaFilter'))return;
+    const select=document.createElement('select');
+    select.id='taskAreaFilter';select.setAttribute('aria-label','Фильтр по области');
+    select.innerHTML='<option value="all">Все области</option><option value="projects">По проектам</option><option value="education">Образование</option><option value="health">Здоровье</option>';
+    select.value=areaFilter;
+    select.onchange=()=>{areaFilter=select.value;applyAreaFilter()};
+    filters.append(select);
+  }
+
+  function addDeleteButton(container,task){
+    if(!task||task.generatedLinked||container.querySelector('[data-safe-delete-task]'))return;
+    const button=document.createElement('button');
+    button.type='button';button.className='btn danger small';button.dataset.safeDeleteTask=task.id;button.textContent='Удалить';
+    button.onclick=event=>{event.stopPropagation();if(confirm(`Удалить задачу «${task.title}»?`))deleteTask(task)};
+    container.append(button);
+  }
+
   function decorate(){
     if(title.textContent.trim()!=='Задачи')return;
     const workspace=content.querySelector('.task-workspace');
     if(!workspace)return;
+    ensureAreaFilter(workspace);
 
     workspace.querySelectorAll('.task-group .list-row').forEach(row=>{
-      const toggle=row.querySelector('[data-toggle-task]');
-      const id=toggle?.dataset.toggleTask;
-      const task=(state.tasks||[]).find(item=>item.id===id);
+      const task=(state.tasks||[]).find(item=>item.id===taskIdFromNode(row));
       const actions=row.querySelector(':scope > .actions');
-      if(!task||!actions||task.generatedLinked||actions.querySelector('[data-safe-delete-task]'))return;
-      const button=document.createElement('button');
-      button.type='button';button.className='btn danger small';button.dataset.safeDeleteTask=task.id;button.textContent='Удалить';
-      button.onclick=event=>{event.stopPropagation();if(confirm(`Удалить задачу «${task.title}»?`))deleteTask(task)};
-      actions.append(button);
+      if(actions)addDeleteButton(actions,task);
+    });
+
+    workspace.querySelectorAll('.kanban-card').forEach(card=>{
+      const task=(state.tasks||[]).find(item=>item.id===taskIdFromNode(card));
+      const actions=card.querySelector('.kanban-actions');
+      if(actions)addDeleteButton(actions,task);
     });
 
     workspace.querySelectorAll('.task-group').forEach(group=>{
@@ -70,7 +152,7 @@
       heading.classList.add('task-group-heading-actions');
       const button=document.createElement('button');button.type='button';button.className='btn danger small';button.dataset.deleteLaterTasks='1';button.textContent='Удалить всё';
       button.onclick=()=>{
-        const all=visibleTasksInGroup(group),deletable=all.filter(task=>!task.generatedLinked),linked=all.length-deletable.length;
+        const all=visibleTasksInGroup(group).filter(task=>taskMatchesArea(task)),deletable=all.filter(task=>!task.generatedLinked),linked=all.length-deletable.length;
         if(!deletable.length){notify(linked?'Связанные задачи удаляются через их источник':'В разделе «Позже» нет задач для удаления');return;}
         const suffix=linked?` Связанные задачи (${linked}) останутся и удаляются через поручение, совещание или спринт.`:'';
         if(!confirm(`Удалить все показанные задачи из раздела «Позже» (${deletable.length})?${suffix}`))return;
@@ -82,11 +164,15 @@
       };
       heading.append(button);
     });
+
+    applyAreaFilter();
   }
 
   let queued=false;
   const schedule=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;decorate()})};
   new MutationObserver(schedule).observe(content,{childList:true,subtree:true});
   new MutationObserver(schedule).observe(title,{childList:true,subtree:true,characterData:true});
+  content.addEventListener('input',event=>{if(event.target.closest('.task-filters'))schedule()});
+  content.addEventListener('change',event=>{if(event.target.closest('.task-filters'))schedule()});
   schedule();
 })();
