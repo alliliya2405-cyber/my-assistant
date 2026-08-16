@@ -6,7 +6,7 @@ const css=fs.readFileSync('styles/education-cards-v1.css','utf8');
 assert(js.includes('educationCollapsedCategories'),'collapsed category state must persist');
 assert(js.includes('data-education-collapse-all'),'collapse-all control is missing');
 assert(js.includes('data-education-expand-all'),'expand-all control is missing');
-assert(js.includes("toggle.textContent=collapsed?'Развернуть':'Свернуть'"),'per-category collapse control is missing');
+assert(js.includes("button.textContent=collapsed?'Развернуть':'Свернуть'"),'per-category collapse control is missing');
 assert(js.includes("body.className='education-category-scroll'"),'category scroll body is missing');
 assert(css.includes('overflow-y:auto'),'education categories must scroll internally');
 assert(css.includes('max-height:620px'),'desktop category height limit is missing');
