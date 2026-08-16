@@ -1,0 +1,10 @@
+'use strict';
+const fs=require('fs');
+const assert=require('assert');
+const js=fs.readFileSync('fixes/month-summary-list-v1.js','utf8');
+assert(js.includes("data-month-list-close"),'month list close control is missing');
+assert(js.includes("listRequested=false"),'close handler must disable list request');
+assert(js.includes("[data-month-summary-list]"),'month summary list marker is missing');
+assert(js.includes("mutations.every"),'observer must ignore mutations originating inside the month summary list');
+assert(js.includes("closest('[data-month-summary-list]')"),'observer self-mutation guard is missing');
+console.log('month summary list close: ok');
