@@ -11,5 +11,5 @@ assert(js.includes('data-month-list-edit')&&js.includes('data-month-list-done'),
 assert(js.includes('data-month-list-close'),'month list close control is missing');
 assert(css.includes('.month-summary-list-body')&&css.includes('overflow:auto'),'month list must have its own scrolling');
 assert(html.includes('styles/month-summary-list-v1.css?v=1'),'month list stylesheet is not loaded');
-assert(html.includes('fixes/month-summary-list-v1.js?v=1'),'month list script is not loaded');
+assert(html.includes('fixes/month-summary-list-v1.js?v=2'),'month list script is not loaded');
 console.log('month summary list: ok');
