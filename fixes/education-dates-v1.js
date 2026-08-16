@@ -48,7 +48,7 @@
     },initial);
   }
 
-  function openWritingNote(item,key){
+  function openWritingNote(item){
     if(!item||typeof modal!=='function')return;
     modal(`Заметка · ${item.title}`,[
       {name:'writingNote',label:'Мышление письмом',type:'textarea',full:true,hint:'Пишите свободно. Все слова из этой заметки участвуют в общем поиске.'}
@@ -107,8 +107,7 @@
     const q=normalize(input.value);
     target.querySelectorAll('[data-education-search-result]').forEach(node=>node.remove());
     if(!q)return;
-    const rows=educationEntries().filter(({item})=>normalize([item.title,item.note,item.writingNote].join(' ')).includes(q));
-    rows.forEach(({key,item})=>{
+    educationEntries().filter(({item})=>normalize([item.title,item.note,item.writingNote].join(' ')).includes(q)).forEach(({key,item})=>{
       const button=document.createElement('button');
       button.type='button';button.className='list-row search-result education-search-result';button.dataset.educationSearchResult=item.id;button.dataset.lifeKey=key;
       const excerpt=item.writingNote||item.note||'';
@@ -135,7 +134,7 @@
     if(note&&isEducationScreen()){
       event.preventDefault();event.stopImmediatePropagation();
       const item=entryById(note.dataset.lifeKey,note.dataset.educationNote);
-      if(item)openWritingNote(item,note.dataset.lifeKey);
+      if(item)openWritingNote(item);
       return;
     }
     const result=event.target.closest('[data-education-search-result]');
@@ -161,11 +160,7 @@
   const schedule=()=>{
     if(queued)return;
     queued=true;
-    requestAnimationFrame(()=>{
-      queued=false;
-      decorateEducationDates();
-      if(isSearchScreen())appendEducationSearchResults();
-    });
+    requestAnimationFrame(()=>{queued=false;decorateEducationDates()});
   };
   new MutationObserver(schedule).observe(content,{childList:true,subtree:true});
   new MutationObserver(schedule).observe(title,{childList:true,subtree:true,characterData:true});
