@@ -1,0 +1,15 @@
+'use strict';
+const fs=require('fs');
+const assert=require('assert');
+const js=fs.readFileSync('fixes/month-summary-list-v1.js','utf8');
+const css=fs.readFileSync('styles/month-summary-list-v1.css','utf8');
+const html=fs.readFileSync('index.html','utf8');
+assert(js.includes("filter.closest('.month-summary')"),'summary cards must open the month list');
+assert(js.includes("all:'Все задачи месяца'")&&js.includes("open:'Оставшиеся задачи месяца'")&&js.includes("done:'Выполненные задачи месяца'")&&js.includes("priority:'Важные задачи месяца'"),'all month list modes must exist');
+assert(js.includes('tasksForMonth')&&js.includes('monthBounds'),'list must be limited to the visible month');
+assert(js.includes('data-month-list-edit')&&js.includes('data-month-list-done'),'month list actions are missing');
+assert(js.includes('data-month-list-close'),'month list close control is missing');
+assert(css.includes('.month-summary-list-body')&&css.includes('overflow:auto'),'month list must have its own scrolling');
+assert(html.includes('styles/month-summary-list-v1.css?v=1'),'month list stylesheet is not loaded');
+assert(html.includes('fixes/month-summary-list-v1.js?v=1'),'month list script is not loaded');
+console.log('month summary list: ok');
