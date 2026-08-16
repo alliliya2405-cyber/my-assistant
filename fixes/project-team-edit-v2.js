@@ -2,7 +2,7 @@
 (() => {
   const content=document.getElementById('content');
   if(!content)return;
-  const norm=v=>String(v||'').trim().toLowerCase().replace(/ё/g,'е');
+  const norm=v=>String(v||'').trim().toLowerCase().replace(/ё/g,'е').replace(/\s+/g,' ');
   function allMembers(){
     if(typeof state==='undefined')return[];
     const out=[];
@@ -27,21 +27,25 @@
       if(typeof persist==='function')persist('Участник команды обновлён');
     },{name:m.name||'',role:m.role||'',department:m.department||'',contact:m.contact||'',note:m.note||''});
   }
+  function nameNodes(){
+    const rows=[];
+    const walker=document.createTreeWalker(content,NodeFilter.SHOW_TEXT,{acceptNode(node){
+      const text=norm(node.nodeValue);return text?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT;
+    }});
+    let node;while((node=walker.nextNode()))rows.push(node);
+    return rows;
+  }
   function enhance(){
-    const members=allMembers();
-    if(!members.length)return;
-    const candidates=[...content.querySelectorAll('b,strong,h2,h3,h4')];
+    const members=allMembers();if(!members.length)return;
+    const texts=nameNodes();
     members.forEach(ref=>{
-      const node=candidates.find(el=>norm(el.textContent)===norm(ref.member.name));
-      if(!node||node.dataset.projectTeamEditBound==='1')return;
-      const btn=document.createElement('button');
-      btn.type='button';
-      btn.className='btn ghost small';
-      btn.textContent='Изменить';
-      btn.style.marginLeft='10px';
+      const textNode=texts.find(n=>norm(n.nodeValue)===norm(ref.member.name));
+      if(!textNode)return;
+      const host=textNode.parentElement;if(!host||host.dataset.projectTeamEditBound==='1')return;
+      const btn=document.createElement('button');btn.type='button';btn.className='btn ghost small';btn.textContent='Изменить';btn.style.marginLeft='10px';
+      btn.dataset.projectTeamEdit='1';
       btn.onclick=e=>{e.preventDefault();e.stopPropagation();edit(ref)};
-      node.insertAdjacentElement('afterend',btn);
-      node.dataset.projectTeamEditBound='1';
+      host.insertAdjacentElement('afterend',btn);host.dataset.projectTeamEditBound='1';
     });
   }
   let queued=false;
