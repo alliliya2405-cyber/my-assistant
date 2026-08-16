@@ -11,6 +11,9 @@ assert(js.includes('purgeDismissedLinkedTasks'),'dismissed linked tasks must not
 assert(js.includes("Источник задачи сохранится; удаляется только карточка из списка задач."),'linked task delete warning is missing');
 assert(js.includes('habit.skippedDates'),'generated health occurrences must remember skipped dates');
 assert(js.includes('purgeSkippedHealthTasks'),'skipped health occurrences must not reappear after regeneration');
+assert(js.includes('const cleanedOnStartup=purgeProtectedTasks()'),'startup cleanup result must be tracked');
+assert(js.includes("if(cleanedOnStartup)"),'startup cleanup must trigger follow-up handling');
+assert(js.includes("setTimeout(()=>{if(typeof render==='function')render();},0)"),'startup cleanup must rerender the visible page so counters are not stale');
 assert(js.includes("group.querySelectorAll('.list-row:not([hidden])')"),'list bulk delete must use only visible task rows');
 assert(js.includes("workspace.querySelectorAll('.task-group').forEach(addListGroupDeleteAll)"),'every list group must receive bulk delete');
 assert(js.includes('dataset.deleteListGroup'),'list group bulk delete control is missing');

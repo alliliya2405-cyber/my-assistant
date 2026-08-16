@@ -72,7 +72,11 @@
       return result;
     };
   }
-  if(purgeProtectedTasks())persist('Список задач очищен');
+  const cleanedOnStartup=purgeProtectedTasks();
+  if(cleanedOnStartup){
+    persist('Список задач очищен');
+    setTimeout(()=>{if(typeof render==='function')render();},0);
+  }
 
   function deleteTask(task){
     if(!task)return false;
