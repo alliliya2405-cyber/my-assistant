@@ -1,0 +1,11 @@
+'use strict';
+const fs=require('fs');
+const assert=require('assert');
+const js=fs.readFileSync('fixes/home-daily-focus-v1.js','utf8');
+const css=fs.readFileSync('styles/home-daily-focus-v1.css','utf8');
+assert(js.includes('home-meeting-list'),'Home upcoming meeting list renderer is missing');
+assert(js.includes("state.meetings||[]"),'meeting source is missing');
+assert(css.includes('.home-meeting-list'),'meeting list styling is missing');
+assert(css.includes('-webkit-line-clamp:2'),'long meeting titles must be clamped');
+assert(css.includes('overflow-y:auto'),'multiple meetings need internal scrolling');
+console.log('home upcoming meetings: ok');
