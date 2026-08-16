@@ -1,0 +1,11 @@
+'use strict';
+const fs=require('fs');
+const assert=require('assert');
+const js=fs.readFileSync('fixes/project-team-edit-v2.js','utf8');
+const html=fs.readFileSync('index.html','utf8');
+assert(js.includes('document.createTreeWalker(content,NodeFilter.SHOW_TEXT'),'project team edit must find names by text nodes');
+assert(js.includes("btn.textContent='Изменить'"),'project team edit button is missing');
+assert(js.includes("host.insertAdjacentElement('afterend',btn)"),'edit button must be inserted next to participant name');
+assert(js.includes("modal('Изменить участника'"),'project team editor modal is missing');
+assert(html.includes('fixes/project-team-edit-v2.js?v=2'),'project team edit cache bust is missing');
+console.log('project team edit v3: ok');
