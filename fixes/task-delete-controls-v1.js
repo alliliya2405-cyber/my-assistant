@@ -74,10 +74,14 @@
     render();
   }
 
+  function taskIdFromNode(node){
+    return node.querySelector('[data-toggle-task]')?.dataset.toggleTask||node.dataset.dragTask||'';
+  }
+
   function visibleTasksInGroup(group){
-    const ids=[...group.querySelectorAll('[data-toggle-task]')].map(button=>button.dataset.toggleTask).filter(Boolean);
-    const seen=new Set();
-    return ids.map(id=>(state.tasks||[]).find(task=>task.id===id)).filter(task=>task&&!seen.has(task.id)&&(seen.add(task.id),true));
+    return [...group.querySelectorAll('.list-row:not([hidden])')]
+      .map(row=>(state.tasks||[]).find(task=>task.id===taskIdFromNode(row)))
+      .filter(Boolean);
   }
 
   function visibleTasksInKanbanColumn(col){
@@ -98,10 +102,6 @@
     return true;
   }
 
-  function taskIdFromNode(node){
-    return node.querySelector('[data-toggle-task]')?.dataset.toggleTask||node.dataset.dragTask||'';
-  }
-
   function applyAreaFilter(){
     if(title.textContent.trim()!=='Задачи')return;
     const workspace=content.querySelector('.task-workspace');
@@ -115,6 +115,7 @@
         if(show)visible++;
       });
       const chip=group.querySelector(':scope > h2 .chip');if(chip)chip.textContent=String(visible);
+      const deleteAll=group.querySelector('[data-delete-list-group]');if(deleteAll)deleteAll.hidden=visible===0;
       group.hidden=visible===0;
     });
     workspace.querySelectorAll('.kanban-col').forEach(col=>{
@@ -149,6 +150,20 @@
     container.append(button);
   }
 
+  function addListGroupDeleteAll(group){
+    const heading=group.querySelector(':scope > h2');
+    if(!heading||heading.querySelector('[data-delete-list-group]')||!group.querySelector('.list-row'))return;
+    heading.classList.add('task-group-heading-actions');
+    const button=document.createElement('button');
+    button.type='button';button.className='btn danger small';button.dataset.deleteListGroup='1';button.textContent='Удалить всё';
+    button.onclick=event=>{
+      event.stopPropagation();
+      const label=[...heading.childNodes].filter(node=>node.nodeType===Node.TEXT_NODE).map(node=>node.textContent).join(' ').trim()||'раздела';
+      deleteMany(visibleTasksInGroup(group),`из раздела «${label}»`);
+    };
+    heading.append(button);
+  }
+
   function addKanbanDeleteAll(col){
     const head=col.querySelector('.kanban-col-head');
     if(!head||head.querySelector('[data-delete-kanban-column]')||!col.querySelector('.kanban-card'))return;
@@ -174,6 +189,7 @@
       const actions=row.querySelector(':scope > .actions');
       if(actions)addDeleteButton(actions,task);
     });
+    workspace.querySelectorAll('.task-group').forEach(addListGroupDeleteAll);
 
     workspace.querySelectorAll('.kanban-card').forEach(card=>{
       const task=(state.tasks||[]).find(item=>item.id===taskIdFromNode(card));
@@ -181,18 +197,6 @@
       if(actions)addDeleteButton(actions,task);
     });
     workspace.querySelectorAll('.kanban-col').forEach(addKanbanDeleteAll);
-
-    workspace.querySelectorAll('.task-group').forEach(group=>{
-      const heading=group.querySelector(':scope > h2');
-      if(!heading||!heading.textContent.trim().startsWith('Позже')||group.querySelector('[data-delete-later-tasks]'))return;
-      heading.classList.add('task-group-heading-actions');
-      const button=document.createElement('button');button.type='button';button.className='btn danger small';button.dataset.deleteLaterTasks='1';button.textContent='Удалить всё';
-      button.onclick=()=>{
-        const all=visibleTasksInGroup(group).filter(task=>taskMatchesArea(task));
-        deleteMany(all,'из раздела «Позже»');
-      };
-      heading.append(button);
-    });
 
     applyAreaFilter();
   }
