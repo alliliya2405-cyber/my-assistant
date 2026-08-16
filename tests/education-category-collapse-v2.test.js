@@ -15,12 +15,15 @@ assert(js.includes("const STORAGE_KEY='educationCollapseState.v2'"),'stale colla
 assert(js.includes('sessionStorage.setItem(STORAGE_KEY'),'collapse state must survive re-render in the current session');
 assert(js.includes('body.hidden=collapsed'),'native hidden state must follow category collapse state');
 assert(js.includes("hero.querySelector('.education-global-collapse-controls')"),'global controls must be anchored in the Education hero');
+assert(js.includes('ensureVisibleScrollbar'),'short categories must retain a visible scrollbar thumb');
 assert(css.includes('.education-category-collapsed > .education-category-body'),'collapsed state must be enforced by card class');
 assert(css.includes('display: none !important'),'collapsed body must remain hidden even if other education decorators run');
 assert(css.includes('.hero .education-global-collapse-controls'),'global controls need explicit visible hero styling');
 assert(css.includes('.education-category-expanded > .education-category-body'),'expanded category body must own the scrolling region');
 assert(css.includes('height: clamp(320px, 43vh, 500px)'),'expanded categories must have bounded body height');
 assert(css.includes('overflow-y: scroll'),'every expanded category body must support internal scrolling');
-assert(html.includes('styles/education-cards-v1.css?v=5'),'Education CSS cache bust is missing');
-assert(html.includes('fixes/education-collapse-fix-v1.js?v=5'),'Education collapse JS cache bust is missing');
-console.log('education category collapse v5 + uniform scroll: ok');
+assert(css.includes('::-webkit-scrollbar-thumb'),'WebKit scrollbar thumb must be explicitly styled');
+assert(css.includes('scrollbar-color: #8f7cff #eef0f7'),'Firefox scrollbar colors must be explicit');
+assert(html.includes('styles/education-cards-v1.css?v=6'),'Education CSS cache bust is missing');
+assert(html.includes('fixes/education-collapse-fix-v1.js?v=6'),'Education collapse JS cache bust is missing');
+console.log('education category collapse v6 + visible scrollbar: ok');
