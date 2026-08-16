@@ -52,9 +52,14 @@
     const section=old||document.createElement('section');
     section.className='card month-summary-list';
     section.dataset.monthSummaryList='1';
+    const addDate=monthSelectedDate||monthBounds()[0];
     const markup=`<header class="month-summary-list-head">
       <div><p class="eyebrow">Список месяца</p><h3>${labels[monthTaskFilter]||labels.all}</h3></div>
-      <div class="month-summary-list-head-actions"><span class="chip">${tasks.length}</span><button type="button" class="btn ghost small" data-month-list-close>Скрыть список</button></div>
+      <div class="month-summary-list-head-actions">
+        <span class="chip">${tasks.length}</span>
+        <button type="button" class="btn primary small" data-slot-date="${addDate}" data-slot-hour="9">+ Добавить</button>
+        <button type="button" class="btn ghost small" data-month-list-close>Скрыть список</button>
+      </div>
     </header>
     <div class="month-summary-list-body">${tasks.length?tasks.map(row).join(''):`<div class="month-summary-list-empty">По выбранному фильтру задач в этом месяце нет</div>`}</div>`;
     if(section.innerHTML!==markup)section.innerHTML=markup;
