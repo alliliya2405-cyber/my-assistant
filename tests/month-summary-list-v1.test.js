@@ -9,7 +9,8 @@ assert(js.includes("all:'Все задачи месяца'")&&js.includes("open:
 assert(js.includes('tasksForMonth')&&js.includes('monthBounds'),'list must be limited to the visible month');
 assert(js.includes('data-month-list-edit')&&js.includes('data-month-list-done'),'month list actions are missing');
 assert(js.includes('data-month-list-close'),'month list close control is missing');
+assert(js.includes('data-slot-date="${addDate}"')&&js.includes('data-slot-hour="9"')&&js.includes('+ Добавить'),'month list add task action is missing');
 assert(css.includes('.month-summary-list-body')&&css.includes('overflow:auto'),'month list must have its own scrolling');
 assert(html.includes('styles/month-summary-list-v1.css?v=1'),'month list stylesheet is not loaded');
-assert(html.includes('fixes/month-summary-list-v1.js?v=2'),'month list script is not loaded');
+assert(html.includes('fixes/month-summary-list-v1.js?v=3'),'month list script is not loaded');
 console.log('month summary list: ok');
