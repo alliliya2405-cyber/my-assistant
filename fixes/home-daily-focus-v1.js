@@ -18,9 +18,13 @@
     if(!card)return;
     const today=typeof todayIso==='function'?todayIso():new Date().toISOString().slice(0,10);
     const meetings=(state.meetings||[]).filter(m=>m.date&&m.date>=today&&!m.completed).slice().sort((a,b)=>(a.date||'').localeCompare(b.date||'')||(a.time||'99:99').localeCompare(b.time||'99:99'));
+    const existing=card.querySelector('.home-meeting-list');
+    const signature=meetings.map(m=>`${m.id}:${m.date}:${m.time||''}:${m.title}`).join('|');
+    if(existing&&existing.dataset.signature===signature)return;
     card.querySelector('.home-meeting')?.remove();
     card.querySelector('.home-note')?.remove();
-    card.querySelector('.home-meeting-list')?.remove();
+    existing?.remove();
+    card.querySelector('.home-meeting-empty')?.remove();
     if(!meetings.length){
       const emptyBox=document.createElement('div');
       emptyBox.className='empty home-meeting-empty';
@@ -28,9 +32,9 @@
       card.append(emptyBox);
       return;
     }
-    card.querySelector('.home-meeting-empty')?.remove();
     const list=document.createElement('div');
     list.className='home-meeting-list';
+    list.dataset.signature=signature;
     list.innerHTML=meetings.map(m=>{
       const projects=(m.projectIds||[]).map(id=>typeof project==='function'?project(id)?.name:'').filter(Boolean);
       return `<div class="home-meeting" data-home-meeting-id="${m.id}"><div class="home-meeting-main"><strong title="${esc(m.title)}">${esc(m.title)}</strong><span>${fmt(m.date)} ${esc(m.time||'')}</span>${projects.length?`<small>${projects.map(esc).join(' · ')}</small>`:''}</div>${homeMeetingActions(m)}</div>`;
