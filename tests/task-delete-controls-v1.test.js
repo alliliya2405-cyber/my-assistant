@@ -8,7 +8,10 @@ assert(js.includes("button.textContent='Удалить всё'"),'bulk delete bu
 assert(js.includes('task.generatedLinked'),'linked tasks must be protected from direct deletion');
 assert(js.includes('habit.skippedDates'),'generated health occurrences must remember skipped dates');
 assert(js.includes('purgeSkippedHealthTasks'),'skipped health occurrences must not reappear after regeneration');
-assert(js.includes('visibleTasksInGroup(group)'),'bulk delete must respect the tasks currently shown in the Later group');
+assert(js.includes("group.querySelectorAll('.list-row:not([hidden])')"),'list bulk delete must use only visible task rows');
+assert(js.includes('workspace.querySelectorAll(\'.task-group\').forEach(addListGroupDeleteAll)'),'every list group must receive bulk delete');
+assert(js.includes('dataset.deleteListGroup'),'list group bulk delete control is missing');
+assert(js.includes('deleteMany(visibleTasksInGroup(group)'),'list group bulk delete handler is missing');
 assert(js.includes('visibleTasksInKanbanColumn(col)'),'kanban bulk delete must respect visible cards');
 assert(js.includes('dataset.deleteKanbanColumn'),'kanban bulk delete control is missing');
 assert(js.includes('deleteMany(visibleTasksInKanbanColumn(col)'),'kanban bulk delete handler is missing');
@@ -17,7 +20,7 @@ assert(js.includes("<option value=\"education\">Образование</option>"
 assert(js.includes("<option value=\"health\">Здоровье</option>"),'health category filter is missing');
 assert(js.includes("BLOCKED_ROUTINE_TITLES=['ходьба','вода','капли в глаза']"),'requested routine cleanup list is missing');
 assert(js.includes("workspace.querySelectorAll('.kanban-card')"),'kanban delete decoration is missing');
-assert(css.includes('[data-delete-later-tasks]'),'bulk delete layout rule is missing');
+assert(css.includes('[data-delete-list-group]'),'list bulk delete layout rule is missing');
 assert(css.includes('[data-delete-kanban-column]'),'kanban bulk delete layout rule is missing');
 assert(css.includes('.kanban-actions'),'kanban action layout rule is missing');
 console.log('task delete controls: ok');
