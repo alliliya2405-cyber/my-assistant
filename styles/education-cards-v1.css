@@ -1,5 +1,5 @@
 /* Education Cards v1
-   Category layout, collapse controls and bounded internal scrolling. */
+   Category layout, reliable collapse controls and bounded internal scrolling. */
 
 .life-grid.education-life-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -24,11 +24,19 @@
   overflow: visible;
 }
 
+.life-grid.education-life-grid > .education-category-collapsed > .education-category-body {
+  display: none !important;
+}
+
 .education-category-header {
   position: sticky;
   top: 0;
   z-index: 2;
   background: inherit;
+}
+
+.education-category-collapsed > .education-category-header {
+  position: static;
 }
 
 .education-category-toggle {
