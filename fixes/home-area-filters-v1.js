@@ -7,20 +7,12 @@
 
   let focusFilter='all';
   let overdueFilter='all';
-  const normalize=value=>String(value||'').trim().toLowerCase().replace(/\s+/g,' ');
 
   function matchesArea(task,filter){
-    if(filter==='all')return true;
-    if(filter==='projects')return Boolean(task?.projectId);
-    if(filter==='health')return !task?.projectId&&Boolean(task?.generatedByHealth||task?.healthHabitId||normalize(task?.sphere)==='health'||normalize(task?.sphere)==='здоровье');
-    if(filter==='education'){
-      const sphere=normalize(task?.sphere);
-      return !task?.projectId&&(task?.linkedSourceType==='education'||sphere==='education'||sphere==='образование'||sphere==='образовательная');
-    }
-    return true;
+    return typeof window.taskMatchesCanonicalArea==='function'?window.taskMatchesCanonicalArea(task,filter):true;
   }
 
-  const options=()=>'<option value="all">Показать все</option><option value="projects">Проекты</option><option value="education">Образование</option><option value="health">Здоровье</option>';
+  const options=()=>'<option value="all">Показать все</option><option value="professional">Профессиональное</option><option value="education">Образовательное</option><option value="personal">Личное</option>';
   const sorted=tasks=>tasks.slice().sort((a,b)=>(a.date||'').localeCompare(b.date||'')||(a.start||'99:99').localeCompare(b.start||'99:99')||(a.title||'').localeCompare(b.title||'','ru'));
 
   function ensureFilter(card,kind,value){
@@ -32,7 +24,7 @@
       select=document.createElement('select');
       select.className='home-area-filter';
       select.dataset.homeAreaFilter=kind;
-      select.setAttribute('aria-label',kind==='focus'?'Фильтр задач в фокусе':'Фильтр просроченных задач');
+      select.setAttribute('aria-label',kind==='focus'?'Фильтр задач в фокусе по сфере':'Фильтр просроченных задач по сфере');
       select.innerHTML=options();
       const oldAction=head.querySelector('[data-dashboard-filter]');
       if(oldAction)oldAction.replaceWith(select);else head.append(select);
