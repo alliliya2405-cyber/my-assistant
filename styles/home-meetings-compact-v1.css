@@ -1,0 +1,10 @@
+/* Compact upcoming meetings on Home: readable with one or many meetings. */
+body.route-home .home-next-card{min-width:0}
+body.route-home .home-next-card .section-title{margin-bottom:12px}
+body.route-home .home-meeting-list{display:grid;gap:8px;max-height:300px;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;padding-right:3px}
+body.route-home .home-meeting{display:grid;gap:4px;padding:12px 14px;border:1px solid #eceef5;border-radius:14px;background:#f8f8fd;min-width:0}
+body.route-home .home-meeting strong{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:15px;line-height:1.35;font-weight:750;letter-spacing:0;color:#273046;overflow-wrap:anywhere}
+body.route-home .home-meeting span{font-size:13px;line-height:1.35;color:var(--muted)}
+body.route-home .home-meeting small{font-size:12px;line-height:1.35;color:#7b8497;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1;overflow:hidden}
+body.route-home .home-note{margin:8px 2px 0;font-size:12px;color:var(--muted)}
+@media(max-width:680px){body.route-home .home-meeting-list{max-height:260px}body.route-home .home-meeting{padding:11px 12px}body.route-home .home-meeting strong{font-size:14px}}
