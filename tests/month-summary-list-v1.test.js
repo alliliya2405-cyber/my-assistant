@@ -9,8 +9,11 @@ assert(js.includes("all:'Все задачи месяца'")&&js.includes("open:
 assert(js.includes('tasksForMonth')&&js.includes('monthBounds'),'list must be limited to the visible month');
 assert(js.includes('data-month-list-edit')&&js.includes('data-month-list-done'),'month list actions are missing');
 assert(js.includes('data-month-list-close'),'month list close control is missing');
-assert(js.includes('data-slot-date="${addDate}"')&&js.includes('data-slot-hour="9"')&&js.includes('+ Добавить'),'month list add task action is missing');
+assert(js.includes('data-month-list-add')&&js.includes('+ Добавить'),'month list add task button is missing');
+assert(js.includes("event.target.closest('[data-month-list-add]')"),'month list add task button must have its own delegated click handler');
+assert(js.includes("openTask(null,{date:add.dataset.date||monthSelectedDate||monthBounds()[0],start:add.dataset.start||'09:00'})"),'month list add handler must open the task editor with the month date');
+assert(!js.includes('data-slot-date="${addDate}"'),'month list add button must not depend on bindPage slot handlers');
 assert(css.includes('.month-summary-list-body')&&css.includes('overflow:auto'),'month list must have its own scrolling');
 assert(html.includes('styles/month-summary-list-v1.css?v=1'),'month list stylesheet is not loaded');
-assert(html.includes('fixes/month-summary-list-v1.js?v=3'),'month list script is not loaded');
+assert(html.includes('fixes/month-summary-list-v1.js?v=4'),'month list script is not loaded');
 console.log('month summary list: ok');
