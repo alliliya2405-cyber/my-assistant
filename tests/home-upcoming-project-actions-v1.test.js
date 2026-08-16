@@ -1,0 +1,11 @@
+'use strict';
+const fs=require('fs');
+const assert=require('assert');
+const js=fs.readFileSync('fixes/home-daily-focus-v1.js','utf8');
+assert(js.includes('data-home-edit-meeting'),'Home meeting edit action is missing');
+assert(js.includes('data-home-done-meeting'),'Home meeting done action is missing');
+assert(js.includes('data-home-edit-project'),'Home project edit action is missing');
+assert(js.includes('data-home-done-project'),'Home project done action is missing');
+assert(js.includes("m.completed=true"),'meeting completion persistence is missing');
+assert(js.includes("p.status='done'"),'project completion persistence is missing');
+console.log('home meeting/project actions: ok');
