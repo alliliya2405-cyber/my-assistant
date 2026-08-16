@@ -116,14 +116,7 @@
   }
 
   function taskMatchesArea(task){
-    if(areaFilter==='all')return true;
-    if(areaFilter==='projects')return Boolean(task?.projectId);
-    if(areaFilter==='health')return !task?.projectId&&Boolean(task?.generatedByHealth||task?.healthHabitId||normalize(task?.sphere)==='health'||normalize(task?.sphere)==='здоровье');
-    if(areaFilter==='education'){
-      const sphere=normalize(task?.sphere);
-      return !task?.projectId&&(task?.linkedSourceType==='education'||sphere==='education'||sphere==='образование');
-    }
-    return true;
+    return typeof window.taskMatchesCanonicalArea==='function'?window.taskMatchesCanonicalArea(task,areaFilter):true;
   }
 
   function applyAreaFilter(){
@@ -159,8 +152,8 @@
     const filters=workspace.querySelector('.task-filters');
     if(!filters||filters.querySelector('#taskAreaFilter'))return;
     const select=document.createElement('select');
-    select.id='taskAreaFilter';select.setAttribute('aria-label','Фильтр по области');
-    select.innerHTML='<option value="all">Все области</option><option value="projects">По проектам</option><option value="education">Образование</option><option value="health">Здоровье</option>';
+    select.id='taskAreaFilter';select.setAttribute('aria-label','Фильтр по сфере');
+    select.innerHTML='<option value="all">Все сферы</option><option value="professional">Профессиональное</option><option value="education">Образовательное</option><option value="personal">Личное</option>';
     select.value=areaFilter;
     select.onchange=()=>{areaFilter=select.value;applyAreaFilter()};
     filters.append(select);
@@ -216,7 +209,7 @@
     const note=document.createElement('div');
     note.dataset.taskSourceExplanation='1';
     note.className='hint';
-    note.textContent='Источник определяется автоматически: созданная здесь задача — «Обычная задача»; задачи из поручений, совещаний, спринтов и раздела «Образование» получают источник из места создания.';
+    note.textContent='Источник определяется автоматически. Сфера задачи выбирается единообразно: «Профессиональное», «Образовательное» или «Личное». Здоровье и досуг относятся к «Личному».';
     heading.insertAdjacentElement('afterend',note);
   }
 
