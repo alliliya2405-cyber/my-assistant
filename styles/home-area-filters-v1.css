@@ -1,0 +1,16 @@
+.home-area-filter{
+  min-width:150px;
+  max-width:190px;
+  height:34px;
+  padding:0 32px 0 11px;
+  border:1px solid #e3e6ef;
+  border-radius:11px;
+  background:#f5f7fb;
+  color:#273046;
+  font:inherit;
+  font-size:13px;
+  cursor:pointer;
+}
+.home-area-filter:focus-visible{outline:3px solid rgba(109,93,252,.20);border-color:#8f82ff}
+.home-today-card .list,.home-overdue-card .list{max-height:520px;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;padding-right:4px}
+@media(max-width:700px){.home-area-filter{min-width:135px;max-width:155px}.home-today-card .section-title,.home-overdue-card .section-title{align-items:flex-start;gap:8px}}
