@@ -57,7 +57,7 @@
       <div><p class="eyebrow">Список месяца</p><h3>${labels[monthTaskFilter]||labels.all}</h3></div>
       <div class="month-summary-list-head-actions">
         <span class="chip">${tasks.length}</span>
-        <button type="button" class="btn primary small" data-slot-date="${addDate}" data-slot-hour="9">+ Добавить</button>
+        <button type="button" class="btn primary small" data-month-list-add data-date="${addDate}" data-start="09:00">+ Добавить</button>
         <button type="button" class="btn ghost small" data-month-list-close>Скрыть список</button>
       </div>
     </header>
@@ -76,6 +76,14 @@
       event.stopPropagation();
       listRequested=false;
       close.closest('[data-month-summary-list]')?.remove();
+      return;
+    }
+
+    const add=event.target.closest('[data-month-list-add]');
+    if(add){
+      event.preventDefault();
+      event.stopPropagation();
+      if(typeof openTask==='function')openTask(null,{date:add.dataset.date||monthSelectedDate||monthBounds()[0],start:add.dataset.start||'09:00'});
       return;
     }
 
