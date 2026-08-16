@@ -44,6 +44,17 @@
     return !!(key&&collapsedState[key]===true);
   }
 
+  function ensureVisibleScrollbar(body,collapsed){
+    if(!body)return;
+    body.style.removeProperty('--education-scroll-fill');
+    if(collapsed)return;
+    requestAnimationFrame(()=>{
+      if(body.hidden||!body.isConnected)return;
+      const fill=Math.max(0,body.clientHeight-body.scrollHeight+1);
+      body.style.setProperty('--education-scroll-fill',`${fill}px`);
+    });
+  }
+
   function setCollapsed(card,value){
     const key=cardKey(card);
     if(!key)return;
@@ -85,6 +96,7 @@
     toggle.setAttribute('aria-controls',`education-body-${cardKey(card)}`);
     toggle.setAttribute('aria-label',`${collapsed?'Развернуть':'Свернуть'} категорию ${cardLabel(card)}`);
     body.id=`education-body-${cardKey(card)}`;
+    ensureVisibleScrollbar(body,collapsed);
   }
 
   function ensureGlobalControls(){
@@ -139,5 +151,6 @@
     requestAnimationFrame(()=>{queued=false;syncAll()});
   };
   new MutationObserver(schedule).observe(content,{childList:true,subtree:true});
+  window.addEventListener('resize',schedule,{passive:true});
   schedule();
 })();
