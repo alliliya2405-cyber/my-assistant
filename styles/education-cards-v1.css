@@ -1,5 +1,4 @@
-/* Education Cards v1
-   Visual layout only. No data or business-logic changes. */
+/* Education Cards v1 */
 
 .life-grid.education-life-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -7,9 +6,54 @@
   align-items: start;
 }
 
-.life-grid.education-life-grid > .card {
-  min-width: 0;
-  overflow: visible;
+.education-category-global-controls{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin:0 0 12px;
+}
+
+.life-grid.education-life-grid > .card.education-category-card {
+  min-width:0;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  max-height:620px;
+}
+
+.education-category-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex:0 0 auto;
+  padding-bottom:10px;
+}
+
+.education-category-header h2,
+.education-category-header h3{
+  margin:0;
+}
+
+.education-category-scroll{
+  min-height:0;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  scrollbar-gutter:stable;
+  padding-right:6px;
+}
+
+.education-category-scroll::-webkit-scrollbar{width:10px}
+.education-category-scroll::-webkit-scrollbar-track{background:transparent}
+.education-category-scroll::-webkit-scrollbar-thumb{background:#d9d8e8;border-radius:999px;border:3px solid transparent;background-clip:padding-box}
+.education-category-scroll{scrollbar-width:thin;scrollbar-color:#d9d8e8 transparent}
+
+.education-category-card.education-category-collapsed{
+  max-height:none;
+}
+
+.education-category-card.education-category-collapsed .education-category-header{
+  padding-bottom:0;
 }
 
 .life-grid.education-life-grid .list-row {
@@ -17,13 +61,12 @@
 }
 
 .life-grid.education-life-grid .list-row .actions {
-  margin-top: 10px;
-  justify-content: flex-start;
-  flex-wrap: wrap;
+  margin-top:10px;
+  justify-content:flex-start;
+  flex-wrap:wrap;
 }
 
 @media (max-width: 900px) {
-  .life-grid.education-life-grid {
-    grid-template-columns: 1fr;
-  }
+  .life-grid.education-life-grid {grid-template-columns:1fr}
+  .life-grid.education-life-grid > .card.education-category-card{max-height:560px}
 }
