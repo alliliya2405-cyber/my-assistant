@@ -12,8 +12,6 @@
   position: relative;
 }
 
-/* Keep the card itself stable; scrolling belongs to the category body so every
-   education window behaves the same way, not only categories with lots of rows. */
 .life-grid.education-life-grid > .education-category-expanded {
   overflow: hidden;
 }
@@ -23,7 +21,27 @@
   overflow-y: scroll;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
+  box-sizing: border-box;
   padding-right: 4px;
+  padding-bottom: var(--education-scroll-fill, 0px);
+  scrollbar-width: thin;
+  scrollbar-color: #8f7cff #eef0f7;
+}
+
+.life-grid.education-life-grid > .education-category-expanded > .education-category-body::-webkit-scrollbar {
+  width: 12px;
+}
+
+.life-grid.education-life-grid > .education-category-expanded > .education-category-body::-webkit-scrollbar-track {
+  background: #eef0f7;
+  border-radius: 999px;
+}
+
+.life-grid.education-life-grid > .education-category-expanded > .education-category-body::-webkit-scrollbar-thumb {
+  background: #8f7cff;
+  border-radius: 999px;
+  border: 3px solid #eef0f7;
+  min-height: 36px;
 }
 
 .life-grid.education-life-grid > .education-category-collapsed {
