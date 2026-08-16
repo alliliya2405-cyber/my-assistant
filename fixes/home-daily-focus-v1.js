@@ -1,4 +1,4 @@
-/* Home Daily Focus v1: add stable visual hooks without changing dashboard data or actions. */
+/* Home Daily Focus v1: dashboard hierarchy + compact upcoming meetings. */
 (function(){
   'use strict';
   const content=document.getElementById('content');
@@ -7,6 +7,24 @@
 
   const text=el=>String(el?.textContent||'').trim();
   const cardFor=el=>el?.closest('.card')||el?.closest('section')||el?.parentElement;
+
+  function renderUpcomingMeetings(){
+    if(text(pageTitle)!=='Главная')return;
+    const card=content.querySelector('.home-next-card');
+    if(!card||card.querySelector('.home-meeting-list'))return;
+    const today=typeof todayIso==='function'?todayIso():new Date().toISOString().slice(0,10);
+    const meetings=(state.meetings||[]).filter(m=>m.date&&m.date>=today).slice().sort((a,b)=>(a.date||'').localeCompare(b.date||'')||(a.time||'99:99').localeCompare(b.time||'99:99'));
+    if(!meetings.length)return;
+    card.querySelector('.home-meeting')?.remove();
+    card.querySelector('.home-note')?.remove();
+    const list=document.createElement('div');
+    list.className='home-meeting-list';
+    list.innerHTML=meetings.map(m=>{
+      const projects=(m.projectIds||[]).map(id=>typeof project==='function'?project(id)?.name:'').filter(Boolean);
+      return `<div class="home-meeting"><strong title="${esc(m.title)}">${esc(m.title)}</strong><span>${fmt(m.date)} ${esc(m.time||'')}</span>${projects.length?`<small>${projects.map(esc).join(' · ')}</small>`:''}</div>`;
+    }).join('');
+    card.append(list);
+  }
 
   function mark(){
     const isHome=text(pageTitle)==='Главная';
@@ -31,6 +49,7 @@
         const card=cardFor(el); if(card)card.classList.add('home-quote-panel');
       }
     });
+    renderUpcomingMeetings();
   }
 
   new MutationObserver(mark).observe(content,{childList:true,subtree:true});
