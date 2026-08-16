@@ -1,0 +1,13 @@
+.planning-summary-clickable{cursor:pointer}
+.week-summary .planning-summary-clickable{transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}
+.week-summary .planning-summary-clickable:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(31,41,55,.06)}
+.week-summary .planning-summary-clickable:focus-visible{outline:3px solid rgba(109,93,252,.24);outline-offset:2px}
+.planning-summary-list-panel{margin:14px 0 18px;padding:16px}
+.planning-summary-list-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.planning-summary-list-head h3{margin:2px 0 0}
+.planning-summary-task-list{max-height:420px;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;padding-right:6px}
+.planning-summary-empty{padding:24px;text-align:center;color:var(--muted,#6b7280);border:1px dashed #dfe3ee;border-radius:14px}
+.planning-summary-fallback{width:100%;display:flex;justify-content:space-between;gap:16px;padding:12px;border:1px solid #e5e7eb;border-radius:12px;background:#fff;text-align:left}
+.planning-summary-fallback+ .planning-summary-fallback{margin-top:8px}
+.planning-summary-fallback span{color:var(--muted,#6b7280)}
+@media(max-width:700px){.planning-summary-list-head{align-items:flex-start}.planning-summary-task-list{max-height:360px}}
