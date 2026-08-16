@@ -22,8 +22,8 @@
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
   box-sizing: border-box;
-  padding-right: 4px;
-  padding-bottom: var(--education-scroll-fill, 0px);
+  padding-right: 16px;
+  position: relative;
   scrollbar-width: thin;
   scrollbar-color: #8f7cff #eef0f7;
 }
@@ -42,6 +42,23 @@
   border-radius: 999px;
   border: 3px solid #eef0f7;
   min-height: 36px;
+}
+
+/* Browsers do not draw a native thumb when a category has less content than
+   the viewport. In that case show the same blue visual thumb explicitly.
+   The class is applied only after JS measures that the body has no overflow. */
+.life-grid.education-life-grid > .education-category-expanded > .education-category-body.education-category-static-thumb::after {
+  content: '';
+  position: absolute;
+  z-index: 4;
+  top: 12px;
+  right: 3px;
+  width: 6px;
+  height: 48px;
+  border-radius: 999px;
+  background: #8f7cff;
+  box-shadow: 0 0 0 2px #eef0f7;
+  pointer-events: none;
 }
 
 .life-grid.education-life-grid > .education-category-collapsed {
