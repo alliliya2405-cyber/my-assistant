@@ -44,14 +44,14 @@
     return !!(key&&collapsedState[key]===true);
   }
 
-  function ensureVisibleScrollbar(body,collapsed){
+  function syncScrollbarIndicator(body,collapsed){
     if(!body)return;
-    body.style.removeProperty('--education-scroll-fill');
+    body.classList.remove('education-category-static-thumb');
     if(collapsed)return;
     requestAnimationFrame(()=>{
       if(body.hidden||!body.isConnected)return;
-      const fill=Math.max(0,body.clientHeight-body.scrollHeight+1);
-      body.style.setProperty('--education-scroll-fill',`${fill}px`);
+      const hasNativeOverflow=body.scrollHeight>body.clientHeight+1;
+      body.classList.toggle('education-category-static-thumb',!hasNativeOverflow);
     });
   }
 
@@ -96,7 +96,7 @@
     toggle.setAttribute('aria-controls',`education-body-${cardKey(card)}`);
     toggle.setAttribute('aria-label',`${collapsed?'Развернуть':'Свернуть'} категорию ${cardLabel(card)}`);
     body.id=`education-body-${cardKey(card)}`;
-    ensureVisibleScrollbar(body,collapsed);
+    syncScrollbarIndicator(body,collapsed);
   }
 
   function ensureGlobalControls(){

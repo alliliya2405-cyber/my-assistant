@@ -9,6 +9,7 @@ assert(css.includes('height: clamp(320px, 43vh, 500px)'),'desktop education cate
 assert(css.includes('overflow-y: scroll'),'every expanded education category must expose internal vertical scrolling');
 assert(css.includes('scrollbar-gutter: stable'),'education scrollbars must not shift card width');
 assert(css.includes('height: clamp(300px, 52vh, 440px)'),'mobile education category bodies need bounded scrolling too');
-assert(css.includes('::-webkit-scrollbar-thumb'),'education categories need a visible thumb style');
-assert(html.includes('styles/education-cards-v1.css?v=6'),'Education scroll CSS cache bust is missing');
+assert(css.includes('::-webkit-scrollbar-thumb'),'education categories need a visible native thumb style');
+assert(css.includes('.education-category-static-thumb::after'),'short categories need a deterministic visual thumb');
+assert(html.includes('styles/education-cards-v1.css?v=7'),'Education scroll CSS cache bust is missing');
 console.log('education all-category internal scrolling: ok');
