@@ -10,7 +10,7 @@ assert(js.includes('<option value="education">Образование</option>'),
 assert(js.includes('<option value="health">Здоровье</option>'),'health option is missing');
 assert(js.includes('<option value="all">Показать все</option>'),'show-all option is missing');
 assert(js.includes("kind==='focus'"),'focus card filter is missing');
-assert(js.includes("kind==='overdue'"),'overdue card filter is missing');
+assert(js.includes('overdueFilter')&&js.includes('.home-overdue-card'),'overdue card filter is missing');
 assert(css.includes('.home-area-filter'),'home filter styles are missing');
 assert(html.includes('fixes/home-area-filters-v1.js?v=1'),'home filter script is not loaded');
 assert(html.includes('styles/home-area-filters-v1.css?v=1'),'home filter stylesheet is not loaded');
