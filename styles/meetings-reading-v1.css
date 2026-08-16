@@ -1,14 +1,40 @@
 /* Meetings Reading v1
-   Improves scanability of expanded meeting cards without changing meeting data or logic. */
+   Harmonious typography and density for one or many meeting cards. */
 
-body.route-meetings .meeting-card:not(.meeting-is-collapsed) > .toolbar{
-  align-items:flex-start;
+body.route-meetings .meeting-card{
+  font-size:14px;
+  line-height:1.5;
+}
+
+body.route-meetings .meeting-card > .toolbar{
   gap:14px;
 }
 
-body.route-meetings .meeting-card:not(.meeting-is-collapsed) > .toolbar > :first-child{
+body.route-meetings .meeting-card > .toolbar > :first-child{
   flex:1 1 320px;
   min-width:0;
+}
+
+body.route-meetings .meeting-card > .toolbar h2{
+  margin:0;
+  font-size:clamp(18px,1.45vw,22px);
+  line-height:1.24;
+  letter-spacing:-.015em;
+  font-weight:760;
+  color:#242b3b;
+  text-wrap:balance;
+}
+
+body.route-meetings .meeting-card > .toolbar .item-meta{
+  margin-top:5px;
+  font-size:12.5px;
+  line-height:1.45;
+  color:#747b8c;
+}
+
+body.route-meetings .meeting-card:not(.meeting-is-collapsed) > .toolbar{
+  align-items:flex-start;
+  margin-bottom:12px;
 }
 
 body.route-meetings .meeting-card:not(.meeting-is-collapsed) > .toolbar .actions{
@@ -16,18 +42,24 @@ body.route-meetings .meeting-card:not(.meeting-is-collapsed) > .toolbar .actions
 }
 
 body.route-meetings .meeting-card:not(.meeting-is-collapsed) > p{
-  margin:0 0 10px;
-  padding:12px 14px;
+  margin:0 0 9px;
+  padding:11px 13px;
   border:1px solid #eceef5;
   border-radius:12px;
   background:#fafbff;
+  font-size:13.5px;
   line-height:1.55;
+  color:#4b5565;
 }
 
 body.route-meetings .meeting-card:not(.meeting-is-collapsed) > p > b{
   display:block;
-  margin-bottom:4px;
-  color:#374151;
+  margin-bottom:3px;
+  font-size:12px;
+  line-height:1.3;
+  letter-spacing:.025em;
+  text-transform:uppercase;
+  color:#626a7a;
 }
 
 body.route-meetings .meeting-card:not(.meeting-is-collapsed) > p.meeting-empty-section{
@@ -51,22 +83,53 @@ body.route-meetings .meeting-card:not(.meeting-is-collapsed) > p.meeting-empty-s
 }
 
 body.route-meetings .meeting-card:not(.meeting-is-collapsed) > .meeting-actions-preview{
-  margin:10px 0;
-  padding:14px;
+  margin:9px 0;
+  padding:12px 13px;
   border:1px solid #e7e8f2;
   border-radius:14px;
   background:#f7f7fc;
+  font-size:13.5px;
+  line-height:1.5;
 }
 
 body.route-meetings .meeting-card:not(.meeting-is-collapsed) > .meeting-actions-preview > b{
   display:block;
-  margin-bottom:8px;
-  color:#374151;
+  margin-bottom:7px;
+  font-size:12px;
+  line-height:1.3;
+  letter-spacing:.025em;
+  text-transform:uppercase;
+  color:#626a7a;
 }
 
 body.route-meetings .meeting-card:not(.meeting-is-collapsed) .meeting-action-row{
-  margin-top:8px;
+  margin-top:7px;
   background:#fff;
+}
+
+body.route-meetings .meeting-card:not(.meeting-is-collapsed) .meeting-action-row strong{
+  font-size:13.5px;
+  line-height:1.35;
+}
+
+body.route-meetings .meeting-card:not(.meeting-is-collapsed) .meeting-action-row span,
+body.route-meetings .meeting-card:not(.meeting-is-collapsed) .meeting-action-row small{
+  font-size:12.5px;
+  line-height:1.45;
+}
+
+body.route-meetings .meeting-card.meeting-is-collapsed > .toolbar h2{
+  font-size:18px;
+}
+
+body.route-meetings .meeting-card.meeting-is-collapsed > .toolbar .item-meta{
+  font-size:12px;
+}
+
+body.route-meetings .meeting-card .btn.small{
+  font-size:12.5px;
+  line-height:1.2;
+  padding:7px 9px;
 }
 
 @media(max-width:900px){
@@ -77,9 +140,18 @@ body.route-meetings .meeting-card:not(.meeting-is-collapsed) .meeting-action-row
 }
 
 @media(max-width:620px){
+  body.route-meetings .meeting-card{
+    font-size:13.5px;
+  }
+
+  body.route-meetings .meeting-card > .toolbar h2,
+  body.route-meetings .meeting-card.meeting-is-collapsed > .toolbar h2{
+    font-size:17px;
+  }
+
   body.route-meetings .meeting-card:not(.meeting-is-collapsed) > p,
   body.route-meetings .meeting-card:not(.meeting-is-collapsed) > .meeting-actions-preview{
-    padding:12px;
+    padding:10px 11px;
   }
 
   body.route-meetings .meeting-card:not(.meeting-is-collapsed) > p.meeting-empty-section{
