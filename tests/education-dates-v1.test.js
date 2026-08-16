@@ -1,0 +1,15 @@
+'use strict';
+const fs=require('fs');
+const assert=require('assert');
+const js=fs.readFileSync('fixes/education-dates-v1.js','utf8');
+const css=fs.readFileSync('styles/education-dates-v1.css','utf8');
+assert(js.includes("label:'Дата начала'"),'education start date field is missing');
+assert(js.includes("label:'Дата завершения'"),'education end date field is missing');
+assert(js.includes('startDate:item.startDate||item.date'),'legacy education date must become start date');
+assert(js.includes('date:startDate'),'education start date must remain compatible with linked tasks');
+assert(js.includes('Дата завершения не может быть раньше даты начала'),'education date range validation is missing');
+assert(js.includes('Начало: ${dateLabel(item.startDate||item.date)} · Завершение: ${dateLabel(item.endDate)}'),'education cards must show both dates');
+assert(js.includes("[data-add-life=\"education\"]"),'education add action must use enhanced modal');
+assert(js.includes("[data-edit-life][data-life-type=\"education\"]"),'education edit action must use enhanced modal');
+assert(css.includes('.education-date-range'),'education date range styles are missing');
+console.log('education dates: ok');
