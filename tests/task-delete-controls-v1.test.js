@@ -10,7 +10,7 @@ assert(js.includes('habit.skippedDates'),'generated health occurrences must reme
 assert(js.includes('purgeSkippedHealthTasks'),'skipped health occurrences must not reappear after regeneration');
 assert(js.includes('visibleTasksInGroup(group)'),'bulk delete must respect the tasks currently shown in the Later group');
 assert(js.includes('visibleTasksInKanbanColumn(col)'),'kanban bulk delete must respect visible cards');
-assert(js.includes('dataDeleteKanbanColumn'),'kanban bulk delete control is missing');
+assert(js.includes('dataset.deleteKanbanColumn'),'kanban bulk delete control is missing');
 assert(js.includes('deleteMany(visibleTasksInKanbanColumn(col)'),'kanban bulk delete handler is missing');
 assert(js.includes("<option value=\"projects\">По проектам</option>"),'projects category filter is missing');
 assert(js.includes("<option value=\"education\">Образование</option>"),'education category filter is missing');
