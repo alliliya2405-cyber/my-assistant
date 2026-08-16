@@ -7,5 +7,8 @@ assert(js.includes("label:'Время окончания'"),'end-time field is m
 assert(!js.includes("label:'Минуты'"),'minutes field must not be shown');
 assert(js.includes('o.duration=start!==null&&end!==null?end-start:0'),'duration compatibility calculation is missing');
 assert(js.includes('derivedEnd'),'existing task end-time derivation is missing');
-assert(html.includes('fixes/task-end-time-v1.js?v=1'),'task end-time fix is not loaded');
+assert(js.includes("['professional','Профессиональное']"),'professional sphere label is missing');
+assert(js.includes("['education','Образовательное']"),'education sphere label is missing');
+assert(js.includes("['personal','Личное']"),'personal sphere label is missing');
+assert(html.includes('fixes/task-end-time-v1.js?v=2'),'task end-time fix is not loaded');
 console.log('task end time: ok');
