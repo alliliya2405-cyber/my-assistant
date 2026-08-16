@@ -52,11 +52,12 @@
     const section=old||document.createElement('section');
     section.className='card month-summary-list';
     section.dataset.monthSummaryList='1';
-    section.innerHTML=`<header class="month-summary-list-head">
+    const markup=`<header class="month-summary-list-head">
       <div><p class="eyebrow">Список месяца</p><h3>${labels[monthTaskFilter]||labels.all}</h3></div>
       <div class="month-summary-list-head-actions"><span class="chip">${tasks.length}</span><button type="button" class="btn ghost small" data-month-list-close>Скрыть список</button></div>
     </header>
     <div class="month-summary-list-body">${tasks.length?tasks.map(row).join(''):`<div class="month-summary-list-empty">По выбранному фильтру задач в этом месяце нет</div>`}</div>`;
+    if(section.innerHTML!==markup)section.innerHTML=markup;
     if(!old){
       const status=workspace.querySelector('.month-filter-status');
       (status||workspace.querySelector('.month-summary'))?.insertAdjacentElement('afterend',section);
@@ -64,16 +65,19 @@
   }
 
   document.addEventListener('click',event=>{
+    const close=event.target.closest('[data-month-list-close]');
+    if(close){
+      event.preventDefault();
+      event.stopPropagation();
+      listRequested=false;
+      close.closest('[data-month-summary-list]')?.remove();
+      return;
+    }
+
     const filter=event.target.closest('.month-workspace [data-month-filter]');
     if(filter&&filter.closest('.month-summary')){
       listRequested=true;
       requestAnimationFrame(()=>requestAnimationFrame(renderSummaryList));
-      return;
-    }
-
-    if(event.target.closest('[data-month-list-close]')){
-      listRequested=false;
-      renderSummaryList();
       return;
     }
 
@@ -98,7 +102,8 @@
   },true);
 
   let queued=false;
-  const schedule=()=>{
+  const schedule=mutations=>{
+    if(mutations?.length&&mutations.every(m=>m.target instanceof Element&&m.target.closest('[data-month-summary-list]')))return;
     if(queued)return;
     queued=true;
     requestAnimationFrame(()=>{queued=false;renderSummaryList()});
