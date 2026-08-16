@@ -1,11 +1,11 @@
 body.route-tasks .task-group-heading-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 body.route-tasks .task-group-heading-actions .chip{margin-right:auto}
-body.route-tasks .task-group-heading-actions [data-delete-later-tasks]{margin-left:auto}
+body.route-tasks .task-group-heading-actions [data-delete-list-group]{margin-left:auto;white-space:nowrap}
 body.route-tasks .task-group .list-row>.actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 body.route-tasks .task-filters{grid-template-columns:minmax(240px,2fr) repeat(4,minmax(150px,1fr))}
 body.route-tasks .kanban-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 body.route-tasks .kanban-col-head-actions{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:8px}
 body.route-tasks .kanban-col-head-actions [data-delete-kanban-column]{white-space:nowrap}
-body.route-tasks .kanban-card[hidden],body.route-tasks .task-group[hidden],body.route-tasks .list-row[hidden],body.route-tasks [data-delete-kanban-column][hidden]{display:none!important}
+body.route-tasks .kanban-card[hidden],body.route-tasks .task-group[hidden],body.route-tasks .list-row[hidden],body.route-tasks [data-delete-kanban-column][hidden],body.route-tasks [data-delete-list-group][hidden]{display:none!important}
 @media(max-width:1100px){body.route-tasks .task-filters{grid-template-columns:1fr 1fr}}
-@media(max-width:680px){body.route-tasks .task-group-heading-actions [data-delete-later-tasks]{margin-left:0}body.route-tasks .task-group .list-row>.actions{justify-content:flex-start}body.route-tasks .task-filters{grid-template-columns:1fr}body.route-tasks .kanban-col-head-actions{grid-template-columns:1fr auto}body.route-tasks .kanban-col-head-actions [data-delete-kanban-column]{grid-column:1/-1;justify-self:start}}
+@media(max-width:680px){body.route-tasks .task-group-heading-actions [data-delete-list-group]{margin-left:0}body.route-tasks .task-group .list-row>.actions{justify-content:flex-start}body.route-tasks .task-filters{grid-template-columns:1fr}body.route-tasks .kanban-col-head-actions{grid-template-columns:1fr auto}body.route-tasks .kanban-col-head-actions [data-delete-kanban-column]{grid-column:1/-1;justify-self:start}}
