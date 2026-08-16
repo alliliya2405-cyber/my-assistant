@@ -9,12 +9,15 @@ assert(js.includes('task.generatedLinked'),'linked tasks must be protected from 
 assert(js.includes('habit.skippedDates'),'generated health occurrences must remember skipped dates');
 assert(js.includes('purgeSkippedHealthTasks'),'skipped health occurrences must not reappear after regeneration');
 assert(js.includes('visibleTasksInGroup(group)'),'bulk delete must respect the tasks currently shown in the Later group');
-assert(js.includes("confirm(`Удалить все показанные задачи из раздела «Позже»"),'bulk deletion must require confirmation');
+assert(js.includes('visibleTasksInKanbanColumn(col)'),'kanban bulk delete must respect visible cards');
+assert(js.includes('dataset.deleteKanbanColumn'),'kanban bulk delete control is missing');
+assert(js.includes('deleteMany(visibleTasksInKanbanColumn(col)'),'kanban bulk delete handler is missing');
 assert(js.includes("<option value=\"projects\">По проектам</option>"),'projects category filter is missing');
 assert(js.includes("<option value=\"education\">Образование</option>"),'education category filter is missing');
 assert(js.includes("<option value=\"health\">Здоровье</option>"),'health category filter is missing');
 assert(js.includes("BLOCKED_ROUTINE_TITLES=['ходьба','вода','капли в глаза']"),'requested routine cleanup list is missing');
 assert(js.includes("workspace.querySelectorAll('.kanban-card')"),'kanban delete decoration is missing');
 assert(css.includes('[data-delete-later-tasks]'),'bulk delete layout rule is missing');
+assert(css.includes('[data-delete-kanban-column]'),'kanban bulk delete layout rule is missing');
 assert(css.includes('.kanban-actions'),'kanban action layout rule is missing');
 console.log('task delete controls: ok');

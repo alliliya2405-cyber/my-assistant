@@ -60,10 +60,30 @@
     return true;
   }
 
+  function deleteMany(tasks,contextLabel){
+    const all=[...new Map((tasks||[]).filter(Boolean).map(task=>[task.id,task])).values()];
+    const deletable=all.filter(task=>!task.generatedLinked),linked=all.length-deletable.length;
+    if(!deletable.length){notify(linked?'Связанные задачи удаляются через их источник':'Нет задач для удаления');return;}
+    const suffix=linked?` Связанные задачи (${linked}) останутся и удаляются через поручение, совещание или спринт.`:'';
+    if(!confirm(`Удалить все показанные задачи ${contextLabel} (${deletable.length})?${suffix}`))return;
+    const ids=new Set(deletable.map(task=>task.id));
+    deletable.forEach(rememberSkippedHealthTask);
+    state.tasks=state.tasks.filter(task=>!ids.has(task.id));
+    if(typeof log==='function')log('task',`Массово удалены задачи ${contextLabel}: ${deletable.length}`,'');
+    persist(`Удалено задач: ${deletable.length}`);
+    render();
+  }
+
   function visibleTasksInGroup(group){
     const ids=[...group.querySelectorAll('[data-toggle-task]')].map(button=>button.dataset.toggleTask).filter(Boolean);
     const seen=new Set();
     return ids.map(id=>(state.tasks||[]).find(task=>task.id===id)).filter(task=>task&&!seen.has(task.id)&&(seen.add(task.id),true));
+  }
+
+  function visibleTasksInKanbanColumn(col){
+    return [...col.querySelectorAll('.kanban-card:not([hidden])')]
+      .map(card=>(state.tasks||[]).find(task=>task.id===taskIdFromNode(card)))
+      .filter(Boolean);
   }
 
   function taskMatchesArea(task){
@@ -106,6 +126,7 @@
         if(show)visible++;
       });
       const chip=col.querySelector('.kanban-col-head .chip');if(chip)chip.textContent=String(visible);
+      const deleteAll=col.querySelector('[data-delete-kanban-column]');if(deleteAll)deleteAll.hidden=visible===0;
     });
   }
 
@@ -128,6 +149,20 @@
     container.append(button);
   }
 
+  function addKanbanDeleteAll(col){
+    const head=col.querySelector('.kanban-col-head');
+    if(!head||head.querySelector('[data-delete-kanban-column]')||!col.querySelector('.kanban-card'))return;
+    head.classList.add('kanban-col-head-actions');
+    const button=document.createElement('button');
+    button.type='button';button.className='btn danger small';button.dataset.deleteKanbanColumn='1';button.textContent='Удалить всё';
+    button.onclick=event=>{
+      event.stopPropagation();
+      const name=head.querySelector('h3')?.textContent.trim()||'в колонке';
+      deleteMany(visibleTasksInKanbanColumn(col),`в колонке «${name}»`);
+    };
+    head.append(button);
+  }
+
   function decorate(){
     if(title.textContent.trim()!=='Задачи')return;
     const workspace=content.querySelector('.task-workspace');
@@ -145,6 +180,7 @@
       const actions=card.querySelector('.kanban-actions');
       if(actions)addDeleteButton(actions,task);
     });
+    workspace.querySelectorAll('.kanban-col').forEach(addKanbanDeleteAll);
 
     workspace.querySelectorAll('.task-group').forEach(group=>{
       const heading=group.querySelector(':scope > h2');
@@ -152,15 +188,8 @@
       heading.classList.add('task-group-heading-actions');
       const button=document.createElement('button');button.type='button';button.className='btn danger small';button.dataset.deleteLaterTasks='1';button.textContent='Удалить всё';
       button.onclick=()=>{
-        const all=visibleTasksInGroup(group).filter(task=>taskMatchesArea(task)),deletable=all.filter(task=>!task.generatedLinked),linked=all.length-deletable.length;
-        if(!deletable.length){notify(linked?'Связанные задачи удаляются через их источник':'В разделе «Позже» нет задач для удаления');return;}
-        const suffix=linked?` Связанные задачи (${linked}) останутся и удаляются через поручение, совещание или спринт.`:'';
-        if(!confirm(`Удалить все показанные задачи из раздела «Позже» (${deletable.length})?${suffix}`))return;
-        const ids=new Set(deletable.map(task=>task.id));
-        deletable.forEach(rememberSkippedHealthTask);
-        state.tasks=state.tasks.filter(task=>!ids.has(task.id));
-        if(typeof log==='function')log('task',`Удалены задачи из раздела «Позже»: ${deletable.length}`,'');
-        persist(`Удалено задач: ${deletable.length}`);render();
+        const all=visibleTasksInGroup(group).filter(task=>taskMatchesArea(task));
+        deleteMany(all,'из раздела «Позже»');
       };
       heading.append(button);
     });
