@@ -44,12 +44,16 @@
   white-space: nowrap;
 }
 
-.education-global-collapse-controls {
+.hero .education-global-collapse-controls {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
-  margin: 0 0 12px;
+  margin-top: 14px;
   flex-wrap: wrap;
+}
+
+.hero .education-global-collapse-controls .btn {
+  background: rgba(255,255,255,.9);
 }
 
 .life-grid.education-life-grid .list-row {

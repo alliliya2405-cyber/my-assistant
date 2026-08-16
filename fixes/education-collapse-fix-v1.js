@@ -4,7 +4,7 @@
   const content=document.getElementById('content');
   if(!content)return;
 
-  const STORAGE_KEY='educationCollapseState.v1';
+  const STORAGE_KEY='educationCollapseState.v2';
   const norm=v=>String(v||'').trim();
   const readState=()=>{
     try{return JSON.parse(sessionStorage.getItem(STORAGE_KEY)||'{}')||{}}catch{return{}}
@@ -14,6 +14,17 @@
 
   function educationGrid(){
     return [...content.querySelectorAll('.life-grid')].find(grid=>grid.querySelector('[data-add-life="education"]'))||null;
+  }
+
+  function educationHero(){
+    const grid=educationGrid();
+    if(!grid)return null;
+    let node=grid.previousElementSibling;
+    while(node){
+      if(node.classList?.contains('hero'))return node;
+      node=node.previousElementSibling;
+    }
+    return content.querySelector('.hero');
   }
 
   function categoryCards(grid){
@@ -67,6 +78,7 @@
     const collapsed=isCollapsed(card);
     card.classList.toggle('education-category-collapsed',collapsed);
     card.classList.toggle('education-category-expanded',!collapsed);
+    body.hidden=collapsed;
     body.setAttribute('aria-hidden',String(collapsed));
     toggle.textContent=collapsed?'Развернуть':'Свернуть';
     toggle.setAttribute('aria-expanded',String(!collapsed));
@@ -75,13 +87,15 @@
     body.id=`education-body-${cardKey(card)}`;
   }
 
-  function ensureGlobalControls(grid){
-    let bar=grid.previousElementSibling;
-    if(!bar?.classList?.contains('education-global-collapse-controls')){
+  function ensureGlobalControls(){
+    const hero=educationHero();
+    if(!hero)return;
+    let bar=hero.querySelector('.education-global-collapse-controls');
+    if(!bar){
       bar=document.createElement('div');
       bar.className='education-global-collapse-controls';
       bar.innerHTML='<button type="button" class="btn ghost small" data-education-collapse-all>Свернуть все</button><button type="button" class="btn ghost small" data-education-expand-all>Развернуть все</button>';
-      grid.insertAdjacentElement('beforebegin',bar);
+      hero.appendChild(bar);
     }
   }
 
@@ -89,7 +103,7 @@
     const grid=educationGrid();
     if(!grid)return;
     grid.classList.add('education-life-grid');
-    ensureGlobalControls(grid);
+    ensureGlobalControls();
     categoryCards(grid).forEach(syncCard);
   }
 
