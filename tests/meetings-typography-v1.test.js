@@ -1,0 +1,10 @@
+'use strict';
+const fs=require('fs');
+const assert=require('assert');
+const css=fs.readFileSync('styles/meetings-reading-v1.css','utf8');
+assert(css.includes('font-size:clamp(18px,1.45vw,22px)'),'responsive meeting title size is missing');
+assert(css.includes('letter-spacing:-.015em'),'meeting title tracking is missing');
+assert(css.includes('font-size:13.5px'),'compact meeting body typography is missing');
+assert(css.includes('.meeting-card.meeting-is-collapsed > .toolbar h2'),'collapsed meeting typography is missing');
+assert(css.includes('.meeting-card .btn.small'),'meeting action density is missing');
+console.log('meetings typography: ok');
