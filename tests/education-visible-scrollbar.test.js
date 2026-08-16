@@ -1,0 +1,13 @@
+'use strict';
+const fs=require('fs');
+const assert=require('assert');
+const css=fs.readFileSync('styles/education-cards-v1.css','utf8');
+const js=fs.readFileSync('fixes/education-collapse-fix-v1.js','utf8');
+const html=fs.readFileSync('index.html','utf8');
+assert(css.includes('::-webkit-scrollbar-thumb'),'education scrollbars need an explicit thumb style');
+assert(css.includes('scrollbar-color: #8f7cff #eef0f7'),'education scrollbars need explicit cross-browser colors');
+assert(js.includes('ensureVisibleScrollbar'),'short education categories must still expose a visible scrollbar thumb');
+assert(js.includes('body.clientHeight-body.scrollHeight+1'),'short category body must get only the minimal overflow needed for a real scrollbar');
+assert(html.includes('styles/education-cards-v1.css?v=6'),'education CSS cache bust must be 6');
+assert(html.includes('fixes/education-collapse-fix-v1.js?v=6'),'education collapse JS cache bust must be 6');
+console.log('education visible scrollbar all categories: ok');
