@@ -20,10 +20,9 @@ assert(!js.includes('scrollHeight>body.clientHeight'),'collapse JS must not own 
 assert(css.includes('.education-category-collapsed > .education-category-body'),'collapsed state must be enforced by card class');
 assert(css.includes('display: none !important'),'collapsed body must remain hidden even if other education decorators run');
 assert(css.includes('.hero .education-global-collapse-controls'),'global controls need explicit visible hero styling');
-assert(css.includes('.education-category-expanded > .education-category-body'),'expanded category body must own the scrolling region');
-assert(css.includes('max-height: clamp(320px, 43vh, 500px)'),'expanded categories must have a bounded maximum height');
-assert(css.includes('overflow-y: auto'),'scrolling must appear only for actual overflow');
-assert(!css.includes('.education-category-static-thumb::after'),'fake scrollbar thumb must be removed');
-assert(html.includes('styles/education-cards-v1.css?v=8'),'Education CSS cache bust is missing');
-assert(html.includes('fixes/education-collapse-fix-v1.js?v=8'),'Education collapse JS cache bust is missing');
-console.log('education category collapse v8 + natural overflow: ok');
+assert(css.includes('height: clamp(280px, 34vh, 380px)'),'expanded categories must use the shared scroll viewport');
+assert(css.includes('overflow-y: scroll'),'all expanded categories must remain scroll containers');
+assert(!css.includes('.education-category-static-thumb::after'),'fake scrollbar thumb must stay removed');
+assert(html.includes('styles/education-cards-v1.css?v=9'),'Education CSS cache bust is missing');
+assert(html.includes('fixes/education-collapse-fix-v1.js?v=8'),'Education collapse JS cache bust must remain 8 because JS is unchanged');
+console.log('education category collapse + persistent scrolling: ok');
