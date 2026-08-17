@@ -1,0 +1,44 @@
+/* Multi-day task schedule editor */
+.task-daily-schedule{
+  margin-top:4px;
+  padding:16px;
+  border:1px solid var(--line,#dfe4ef);
+  border-radius:16px;
+  background:var(--soft,#f8f9fd);
+}
+.task-daily-schedule[hidden]{display:none!important}
+.task-daily-schedule-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:12px;
+}
+.task-daily-schedule-head strong{display:block;font-size:15px}
+.task-daily-schedule-head p{margin:4px 0 0;color:var(--muted,#788399);font-size:12px;line-height:1.45}
+.task-daily-schedule-list{
+  display:grid;
+  gap:8px;
+  max-height:280px;
+  overflow-y:auto;
+  padding-right:4px;
+}
+.task-daily-schedule-row{
+  display:grid;
+  grid-template-columns:minmax(110px,.8fr) minmax(120px,1fr) minmax(120px,1fr) auto;
+  align-items:end;
+  gap:10px;
+  padding:10px 12px;
+  border:1px solid var(--line,#dfe4ef);
+  border-radius:12px;
+  background:#fff;
+}
+.task-daily-schedule-date{align-self:center;font-weight:700;white-space:nowrap}
+.task-daily-schedule-row label{display:grid;gap:5px;font-size:11px;color:var(--muted,#788399)}
+.task-daily-schedule-row input{width:100%;min-width:0;padding:8px 10px;border:1px solid var(--line,#dfe4ef);border-radius:9px;background:#fff;color:inherit}
+.task-daily-schedule-row .btn{align-self:center;white-space:nowrap}
+@media(max-width:760px){
+  .task-daily-schedule-row{grid-template-columns:1fr 1fr}
+  .task-daily-schedule-date{grid-column:1/-1}
+  .task-daily-schedule-row .btn{grid-column:1/-1;justify-self:start}
+}
