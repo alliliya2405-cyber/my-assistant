@@ -7,6 +7,7 @@ const html=fs.readFileSync('index.html','utf8');
 assert(js.includes("filter.closest('.month-summary')"),'summary cards must open the month list');
 assert(js.includes("all:'Все задачи месяца'")&&js.includes("open:'Оставшиеся задачи месяца'")&&js.includes("done:'Выполненные задачи месяца'")&&js.includes("priority:'Важные задачи месяца'"),'all month list modes must exist');
 assert(js.includes('tasksForMonth')&&js.includes('monthBounds'),'list must be limited to the visible month');
+assert(js.includes('TaskCalendarRange?.overlaps'),'month list must include tasks whose date range overlaps the month');
 assert(js.includes('data-month-list-edit')&&js.includes('data-month-list-done'),'month list actions are missing');
 assert(js.includes('data-month-list-close'),'month list close control is missing');
 assert(js.includes('data-month-list-add')&&js.includes('+ Добавить'),'month list add task button is missing');
@@ -15,5 +16,5 @@ assert(js.includes("openTask(null,{date:add.dataset.date||monthSelectedDate||mon
 assert(!js.includes('data-slot-date="${addDate}"'),'month list add button must not depend on bindPage slot handlers');
 assert(css.includes('.month-summary-list-body')&&css.includes('overflow:auto'),'month list must have its own scrolling');
 assert(html.includes('styles/month-summary-list-v1.css?v=1'),'month list stylesheet is not loaded');
-assert(html.includes('fixes/month-summary-list-v1.js?v=4'),'month list script is not loaded');
+assert(html.includes('fixes/month-summary-list-v1.js?v=5'),'month list range-aware script is not loaded');
 console.log('month summary list: ok');
