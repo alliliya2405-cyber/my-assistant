@@ -1,5 +1,5 @@
 /* Education Cards v1
-   Category layout, reliable collapse controls and natural internal scrolling. */
+   Category layout, reliable collapse controls and consistent internal scroll viewports. */
 
 .life-grid.education-life-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -13,15 +13,16 @@
 }
 
 .life-grid.education-life-grid > .education-category-expanded {
-  overflow: visible;
+  overflow: hidden;
 }
 
 .life-grid.education-life-grid > .education-category-expanded > .education-category-body {
-  max-height: clamp(320px, 43vh, 500px);
-  overflow-y: auto;
+  height: clamp(280px, 34vh, 380px);
+  overflow-y: scroll;
   overscroll-behavior: contain;
+  scrollbar-gutter: stable;
   box-sizing: border-box;
-  padding-right: 4px;
+  padding-right: 6px;
   scrollbar-width: thin;
   scrollbar-color: #8f7cff #eef0f7;
 }
@@ -89,6 +90,6 @@
   }
 
   .life-grid.education-life-grid > .education-category-expanded > .education-category-body {
-    max-height: clamp(300px, 52vh, 440px);
+    height: clamp(260px, 44vh, 360px);
   }
 }
