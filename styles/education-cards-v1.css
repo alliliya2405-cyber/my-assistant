@@ -1,5 +1,5 @@
 /* Education Cards v1
-   Category layout, reliable collapse controls and uniform internal scrolling. */
+   Category layout, reliable collapse controls and natural internal scrolling. */
 
 .life-grid.education-life-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -13,23 +13,21 @@
 }
 
 .life-grid.education-life-grid > .education-category-expanded {
-  overflow: hidden;
+  overflow: visible;
 }
 
 .life-grid.education-life-grid > .education-category-expanded > .education-category-body {
-  height: clamp(320px, 43vh, 500px);
-  overflow-y: scroll;
+  max-height: clamp(320px, 43vh, 500px);
+  overflow-y: auto;
   overscroll-behavior: contain;
-  scrollbar-gutter: stable;
   box-sizing: border-box;
-  padding-right: 16px;
-  position: relative;
+  padding-right: 4px;
   scrollbar-width: thin;
   scrollbar-color: #8f7cff #eef0f7;
 }
 
 .life-grid.education-life-grid > .education-category-expanded > .education-category-body::-webkit-scrollbar {
-  width: 12px;
+  width: 10px;
 }
 
 .life-grid.education-life-grid > .education-category-expanded > .education-category-body::-webkit-scrollbar-track {
@@ -40,25 +38,7 @@
 .life-grid.education-life-grid > .education-category-expanded > .education-category-body::-webkit-scrollbar-thumb {
   background: #8f7cff;
   border-radius: 999px;
-  border: 3px solid #eef0f7;
-  min-height: 36px;
-}
-
-/* Browsers do not draw a native thumb when a category has less content than
-   the viewport. In that case show the same blue visual thumb explicitly.
-   The class is applied only after JS measures that the body has no overflow. */
-.life-grid.education-life-grid > .education-category-expanded > .education-category-body.education-category-static-thumb::after {
-  content: '';
-  position: absolute;
-  z-index: 4;
-  top: 12px;
-  right: 3px;
-  width: 6px;
-  height: 48px;
-  border-radius: 999px;
-  background: #8f7cff;
-  box-shadow: 0 0 0 2px #eef0f7;
-  pointer-events: none;
+  border: 2px solid #eef0f7;
 }
 
 .life-grid.education-life-grid > .education-category-collapsed {
@@ -109,6 +89,6 @@
   }
 
   .life-grid.education-life-grid > .education-category-expanded > .education-category-body {
-    height: clamp(300px, 52vh, 440px);
+    max-height: clamp(300px, 52vh, 440px);
   }
 }

@@ -44,17 +44,6 @@
     return !!(key&&collapsedState[key]===true);
   }
 
-  function syncScrollbarIndicator(body,collapsed){
-    if(!body)return;
-    body.classList.remove('education-category-static-thumb');
-    if(collapsed)return;
-    requestAnimationFrame(()=>{
-      if(body.hidden||!body.isConnected)return;
-      const hasNativeOverflow=body.scrollHeight>body.clientHeight+1;
-      body.classList.toggle('education-category-static-thumb',!hasNativeOverflow);
-    });
-  }
-
   function setCollapsed(card,value){
     const key=cardKey(card);
     if(!key)return;
@@ -96,7 +85,6 @@
     toggle.setAttribute('aria-controls',`education-body-${cardKey(card)}`);
     toggle.setAttribute('aria-label',`${collapsed?'Развернуть':'Свернуть'} категорию ${cardLabel(card)}`);
     body.id=`education-body-${cardKey(card)}`;
-    syncScrollbarIndicator(body,collapsed);
   }
 
   function ensureGlobalControls(){
@@ -151,6 +139,5 @@
     requestAnimationFrame(()=>{queued=false;syncAll()});
   };
   new MutationObserver(schedule).observe(content,{childList:true,subtree:true});
-  window.addEventListener('resize',schedule,{passive:true});
   schedule();
 })();
