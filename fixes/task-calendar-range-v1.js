@@ -154,4 +154,8 @@
       });
     };
   }
+
+  setTimeout(()=>{
+    if(typeof route!=='undefined'&&['day','week','month'].includes(route)&&typeof render==='function')render();
+  },0);
 })(typeof window!=='undefined'?window:globalThis);
