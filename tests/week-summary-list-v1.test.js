@@ -10,6 +10,7 @@ assert(js.includes("labels={all:'Все задачи недели'"),'week list 
 assert(js.includes("filter==='open'?!task.done"),'open task filter is missing');
 assert(js.includes("filter==='done'?task.done"),'done task filter is missing');
 assert(js.includes("task.priority==='priority'||task.priority==='urgent'"),'priority filter must include priority and urgent tasks');
+assert(js.includes('TaskCalendarRange?.overlaps'),'week list must include tasks whose date range overlaps the week');
 assert(js.includes('data-week-list-close'),'week list close control is missing');
 assert(js.includes('data-week-list-add'),'week list add control is missing');
 assert(js.includes('data-week-list-edit'),'week list edit control is missing');
@@ -19,5 +20,5 @@ assert(js.includes("task.status=task.done?'done':'planned'"),'week list completi
 assert(css.includes('.week-summary>[data-week-summary-filter]'),'week summary needs clickable styling');
 assert(css.includes('.week-summary-list-body'),'week list body styling is missing');
 assert(html.includes('styles/week-summary-list-v1.css?v=1'),'week summary CSS asset is not loaded');
-assert(html.includes('fixes/week-summary-list-v1.js?v=1'),'week summary JS asset is not loaded');
+assert(html.includes('fixes/week-summary-list-v1.js?v=2'),'week summary range-aware JS asset is not loaded');
 console.log('week summary list: ok');
